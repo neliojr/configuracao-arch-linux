@@ -14,7 +14,11 @@ Este repositório contém minhas descobertas, dicas e ajustes no Ubuntu, organiz
 
 - [Como montar disco NTFS](sistemas_arquivos/ntfs.md)
 
-- [Como montar disco NTFS](extensões/thunderbird.md)
+- [Extensões](extensões/menu.md)
+
+- [Apps](apps/menu.md)
+
+- [Extensões](extensões/menu.md)
 
 ## Como usar
 Para cada categoria, veja o arquivo correspondente e siga as instruções detalhadas.
