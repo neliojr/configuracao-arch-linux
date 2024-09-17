@@ -3,9 +3,9 @@ Acesse o terminal vá para o arquivo do crontab:
 `crontab -e`
 
 No final do arquivo, coloque o cron (exemplo):  
-`* * * * * /home/nelio/Documentos/Scripts/sync-with-rsync.sh >> /home/nelio/Documentos/Scripts/logs/log.txt 2>&1`
+`*/15 * * * * /home/nelio/Documentos/Scripts/sync-with-rsync.sh >> /home/nelio/Documentos/Scripts/logs/log.txt 2>&1`
 
-O cron será executado a cada minuto.
+O cron será executado a cada 15 minutos.
 
 Script que está sendo executado: `sync-with-rsync.sh`  
 `/usr/bin/rsync -av --delete /home/nelio/Documentos/ /home/nelio/.onedrive/Documentos`  
