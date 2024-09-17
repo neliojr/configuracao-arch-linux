@@ -8,6 +8,8 @@ Este repositório contém minhas descobertas, dicas e ajustes no Ubuntu, organiz
 
 - [Extensões](extensões/menu.md)
 
+- [Crons](cron/menu.md)
+
 - [Como instalar um pacote .deb](pacotes/deb.md)
 
 - [Como instalar e configurar o Git](desenvolvimento/git.md)
