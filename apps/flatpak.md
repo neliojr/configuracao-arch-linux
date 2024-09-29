@@ -1,3 +1,13 @@
 # Apps para instalar via Flatpak
-- Discord;
-- Lutris.
+- Vesktop (Discord);
+- Lutris;
+- GIMP;
+- Inkscape;
+- Notion;
+- Postman;
+- Spotify;
+- Telegram;
+- Thunderbird;
+- VS Code;
+- Bitwarden;
+- Cohesion (Notion).

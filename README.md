@@ -1,6 +1,6 @@
-# Configuração Ubuntu
+# Configuração Fedora
 
-Este repositório contém minhas descobertas, dicas e ajustes no Ubuntu, organizados por categorias como desempenho, segurança, automação e muito mais.
+Este repositório contém minhas descobertas, dicas e ajustes no Fedora, organizados por categorias como desempenho, segurança, automação e muito mais.
 
 ## Conteúdo
 
@@ -12,13 +12,11 @@ Este repositório contém minhas descobertas, dicas e ajustes no Ubuntu, organiz
 
 - [Comandos](comandos/comandos.md)
 
-- [Como instalar um pacote .deb](pacotes/deb.md)
+- [Como instalar um pacote .rpm](pacotes/rpm.md)
 
 - [Como instalar e configurar o Git](desenvolvimento/git.md)
 
 - [Como instalar e configurar o NVM](desenvolvimento/nvm.md)
-
-- [Corrigindo bug do compartilhamento de tela no Discord](correções/discord.md)
 
 - [Como montar disco NTFS](sistemas_arquivos/ntfs.md)
 
