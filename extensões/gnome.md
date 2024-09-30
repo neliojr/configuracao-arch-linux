@@ -4,3 +4,4 @@ Digite o comando de instalação no terminal:
 
 # Minhas extensões favoritas
 - [Clipboard Indicator](https://extensions.gnome.org/extension/779/clipboard-indicator/)
+- [Dash to Dock](https://extensions.gnome.org/extension/307/dash-to-dock/)
