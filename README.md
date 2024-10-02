@@ -1,8 +1,10 @@
-# Configuração Fedora
+# Configuração ArchLinux
 
-Este repositório contém minhas descobertas, dicas e ajustes no Fedora, organizados por categorias como desempenho, segurança, automação e muito mais.
+Este repositório contém minhas descobertas, dicas e ajustes no Arch Linux, organizados por categorias como desempenho, segurança, automação e muito mais.
 
 ## Conteúdo
+
+- [Drivers](drivers/menu.md)
 
 - [Apps](apps/menu.md)
 

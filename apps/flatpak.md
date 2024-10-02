@@ -3,7 +3,6 @@
 - Lutris;
 - GIMP;
 - Inkscape;
-- Notion;
 - Postman;
 - Spotify;
 - Telegram;
