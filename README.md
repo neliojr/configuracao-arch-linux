@@ -10,6 +10,8 @@ Este repositório contém minhas descobertas, dicas e ajustes no Arch Linux, org
 
 - [Extensões](extensões/menu.md)
 
+- [Personalização](personalização/menu.md)
+
 - [Crons](cron/menu.md)
 
 - [Comandos](comandos/comandos.md)

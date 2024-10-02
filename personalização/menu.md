@@ -1,0 +1,2 @@
+# Personalizações
+- [Terminal](terminal.md)
