@@ -1,3 +1,3 @@
 # Lista de cron
-- [Iniciar Rclone](iniciar-rclone.md)
-- [Sincronizar com Rsync](sincronizar.md)
+- [Montar Rclone](montar-rclone.md)
+- [Sincronizar com Rclone sync](sincronizar.md)

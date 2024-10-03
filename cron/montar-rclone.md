@@ -1,4 +1,4 @@
-# Iniciar Rclone
+# Montar Rclone
 Acesse o terminal vá para o arquivo do crontab:  
 `export EDITOR=nano`  
 `crontab -e`  
