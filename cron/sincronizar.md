@@ -1,7 +1,7 @@
 # Sincronizar com Rsync
 Acesse o terminal vá para o arquivo do crontab:  
-`export EDITOR=nano`
-`crontab -e`
+`export EDITOR=nano`  
+`crontab -e`  
 
 No final do arquivo, coloque o cron (exemplo):  
 `*/15 * * * * ~/Documentos/Scripts/rclone-sync.sh >> ~/Documentos/Scripts/logs/rclone-sync.log 2>&1`

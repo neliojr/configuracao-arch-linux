@@ -1,7 +1,7 @@
 # Iniciar Rclone
 Acesse o terminal vá para o arquivo do crontab:  
-`export EDITOR=nano`
-`crontab -e`
+`export EDITOR=nano`  
+`crontab -e`  
 
 No final do arquivo, coloque o cron (exemplo):  
 `@reboot ~/Documentos/Scripts/rclone-mount.sh`
