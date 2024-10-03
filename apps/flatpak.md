@@ -9,4 +9,5 @@
 - Thunderbird;
 - VS Code;
 - Bitwarden;
-- Cohesion (Notion).
+- Cohesion (Notion);
+- Motrix.
