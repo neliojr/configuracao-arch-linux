@@ -9,7 +9,7 @@ sudo pacman -Syu
 
 #Instalando drivers
 sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman
-#abrir config e alterar o # do AutoEnable=true
+sudo sed -i 's/#AutoEnable=true /AutoEnable=true /g' /etc/bluetooth/main.conf
 sudo systemctl start bluetooth.service
 sudo systemctl enable bluetooth.service
 
