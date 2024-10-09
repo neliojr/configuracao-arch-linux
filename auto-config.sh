@@ -29,6 +29,7 @@ flatpak install --assumeyes flathub org.telegram.desktop
 flatpak install --assumeyes flathub dev.vencord.Vesktop
 flatpak install --assumeyes flathub com.spotify.Client
 flatpak install --assumeyes flathub com.valvesoftware.Steam
+flatpak install --assumeyes flathub org.gnome.Boxes
 flatpak install --assumeyes flathub net.lutris.Lutris
 flatpak install --assumeyes flathub org.gimp.GIMP
 flatpak install --assumeyes flathub org.inkscape.Inkscape
