@@ -1,4 +1,8 @@
 #!/bin/bash
+clear
+echo 'Iniciando configuração do sistema em 10s.'
+echo 'Pressione CTRL + C para cancelar.'
+sleep 10
 
 #Atualizando repositório
 sudo pacman -Syu
@@ -44,3 +48,13 @@ git config --global user.email neliojr@neliojr.me
 #Cronie
 sudo systemctl enable cronie.service
 sudo systemctl start cronie.service
+
+#Personalização
+#Alterando cor do usuário no terminal
+sed -i 's/^PS1=.*/PS1='\''\\\[\\033[01;32m\\\]\\u@\\h\\\[\\033[00m\\\]:\\\[\\033[01;32m\\\]\\W\\\[\\033[00m\\\]\$ '\''/' ~/.bashrc
+#Ativando cor no pacman.
+sudo sed -i 's/#Color/Color/g' /etc/pacman.conf
+#Alterando quantidade de downloads paralelos
+sudo sed -i 's/ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
+
+echo 'Configuração finalizada.'
