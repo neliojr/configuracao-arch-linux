@@ -58,4 +58,10 @@ sudo sed -i 's/#Color/Color/g' /etc/pacman.conf
 #Alterando quantidade de downloads paralelos
 sudo sed -i 's/ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
 
+#Baixando e instalando xpadneo (driver do controle xbox)
+git clone https://github.com/atar-axis/xpadneo.git ~/Downloads/xpadneo
+sudo pacman -S dkms linux-headers
+cd ~/Downloads
+sudo ./install.sh
+
 echo 'Configuração finalizada.'
