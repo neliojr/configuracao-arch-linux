@@ -60,8 +60,8 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
 
 #Baixando e instalando xpadneo (driver do controle xbox)
 git clone https://github.com/atar-axis/xpadneo.git ~/Downloads/xpadneo
-sudo pacman -S dkms linux-headers
-cd ~/Downloads
+sudo pacman -S --noconfirm dkms linux-headers
+cd ~/Downloads/xpadneo
 sudo ./install.sh
 
 #Configurando OneDrive com Rclone
@@ -70,10 +70,10 @@ read -p "Deseja instalar e configurar o Rclone? [S/n]" resposta
 resposta=$(echo $resposta | tr 'a-z' 'A-Z')
 
 if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
-    sudo pacman -S rclone
+    sudo pacman -S --noconfirm rclone
     rclone config
     #Configurando serviço para montar o OneDrive com o systemctl
-    sudo cat << EOF > /etc/systemd/system/rclone-onedrive.service
+    sudo cat << EOF > /etc/systemd/system/rclone-mount.service
 [Unit]
 Description=Rclone Mount OneDrive
 Wants=network-online.target
