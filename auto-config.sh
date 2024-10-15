@@ -56,7 +56,7 @@ sed -i 's/^PS1=.*/PS1='\''\\\[\\033[01;32m\\\]\\u@\\h\\\[\\033[00m\\\]:\\\[\\033
 #Ativando cor no pacman.
 sudo sed -i 's/#Color/Color/g' /etc/pacman.conf
 #Alterando quantidade de downloads paralelos
-sudo sed -i 's/ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
+sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
 
 #Baixando e instalando xpadneo (driver do controle xbox)
 git clone https://github.com/atar-axis/xpadneo.git ~/Downloads/xpadneo
