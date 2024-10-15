@@ -64,4 +64,67 @@ sudo pacman -S dkms linux-headers
 cd ~/Downloads
 sudo ./install.sh
 
+#Configurando OneDrive com Rclone
+read -p "Deseja instalar e configurar o Rclone? [S/n]" resposta
+
+resposta=$(echo $resposta | tr 'a-z' 'A-Z')
+
+if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
+    sudo pacman -S rclone
+    rclone config
+    #Configurando serviço para montar o OneDrive com o systemctl
+    sudo cat << EOF > /etc/systemd/system/rclone-onedrive.service
+[Unit]
+Description=Rclone Mount OneDrive
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rclone mount OneDrive: /home/nelio/.mycloud \
+    --log-file /home/nelio/Documentos/Scripts/Logs/rclone-mount.log \
+    --vfs-cache-mode full \
+    --vfs-cache-max-size 2G \
+    --vfs-cache-max-age 10m \
+    --rc \
+    --rc-enable-metrics \
+    --rc-web-gui \
+    --no-console \
+    --multi-thread-streams 32 \
+    --rc-no-auth \
+    --rc-web-gui-no-open-browser \
+    --fast-list \
+    --onedrive-chunk-size 25M \
+    --use-mmap \
+    --buffer-size 32M \
+    --vfs-read-chunk-size 1M \
+    --vfs-read-chunk-size-limit 128M
+ExecStop=/bin/fusermount -uz /home/nelio/.mycloud
+Restart=on-failure
+User=nelio
+Group=nelio
+
+[Install]
+WantedBy=default.target
+EOF
+
+    sudo systemctl daemon-reload
+    sudo systemctl enable rclone-mount.service
+    sudo systemctl start rclone-mount.service
+
+    #Baixando pastas do OneDrive para o /home/user
+    mkdir ~/.mycloud
+    rclone sync OneDrive:/Documentos ~/Documentos --progress
+    rclone sync OneDrive:/Downloads ~/Downloads --progress
+    rclone sync OneDrive:/Imagens ~/Imagens --progress
+    rclone sync OneDrive:/Vídeos ~/Vídeos --progress
+
+    #Adicionando cron
+    (crontab -l; echo "*/15 * * * * ~/Documentos/Scripts/rclone-sync.sh") | crontab -
+elif [ "$resposta" == "N" ]; then
+    echo "Você escolheu Não!"
+else
+    echo "Resposta inválida. Por favor, digite S ou N."
+fi
+
 echo 'Configuração finalizada.'
