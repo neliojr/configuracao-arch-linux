@@ -121,10 +121,8 @@ EOF
 
     #Adicionando cron
     (crontab -l; echo "*/15 * * * * ~/Documentos/Scripts/rclone-sync.sh") | crontab -
-elif [ "$resposta" == "N" ]; then
-    echo "Você escolheu Não!"
 else
-    echo "Resposta inválida. Por favor, digite S ou N."
+    echo "Você escolheu não instalar e configurar o rclone."
 fi
 
 echo 'Configuração finalizada.'
