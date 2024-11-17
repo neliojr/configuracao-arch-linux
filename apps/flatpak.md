@@ -10,4 +10,6 @@
 - VS Code;
 - Bitwarden;
 - Cohesion (Notion);
-- Motrix.
+- Motrix;
+- OBS Studio;
+- Gear Lever.
