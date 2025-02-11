@@ -66,6 +66,7 @@ if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
     mkdir -p ~/Documentos/Scripts/Logs
 
     #Configurando serviço para montar o OneDrive com o systemctl
+    #Montador do cloud.
     sudo cat << EOF > /etc/systemd/system/rclone-mount.service
 [Unit]
 Description=Rclone Mount OneDrive
@@ -105,12 +106,51 @@ EOF
     sudo systemctl enable rclone-mount.service
     sudo systemctl start rclone-mount.service
 
+    #Sincronizador.
+    sudo cat << EOF > /etc/systemd/system/rclone-sync.service
+[Unit]
+Description=Sincronização de pastas com OneDrive via Rclone
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rclone sync /home/nelio/Documentos OneDrive:/Documentos --progress
+ExecStart=/usr/bin/rclone sync /home/nelio/Downloads OneDrive:/Downloads --progress
+ExecStart=/usr/bin/rclone sync /home/nelio/Imagens OneDrive:/Imagens --progress
+ExecStart=/usr/bin/rclone sync /home/nelio/Vídeos OneDrive:/Videos --progress
+User=nelio
+Group=nelio
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=4
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    #Timer do sincronizador.
+    sudo cat << EOF > /etc/systemd/system/rclone-sync.timer
+[Unit]
+Description=Executa a sincronização do Rclone periodicamente
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+Unit=rclone-sync.service
+
+[Install]
+WantedBy=timers.target
+EOF
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now rclone-sync.timer
+
     #Baixando pastas do OneDrive para o /home/user
     mkdir ~/.mycloud
     rclone sync OneDrive:/Documentos ~/Documentos --progress
     rclone sync OneDrive:/Downloads ~/Downloads --progress
     rclone sync OneDrive:/Imagens ~/Imagens --progress
-    rclone sync OneDrive:/Vídeos ~/Vídeos --progress
+    rclone sync OneDrive:/Videos ~/Vídeos --progress
 
     #Adicionando cron
     (crontab -l; echo "*/15 * * * * ~/Documentos/Scripts/rclone-sync.sh") | crontab -
@@ -143,10 +183,8 @@ flatpak install --assumeyes flathub org.gimp.GIMP
 flatpak install --assumeyes flathub org.inkscape.Inkscape
 flatpak install --assumeyes flathub com.getpostman.Postman
 flatpak install --assumeyes flathub org.mozilla.Thunderbird
+flatpak install --assumeyes flathub org.qbittorrent.qBittorrent
 flatpak install --assumeyes flathub com.visualstudio.code
-flatpak install --assumeyes flathub net.agalwood.Motrix
-flatpak install --assumeyes flathub com.obsproject.Studio
-flatpak install --assumeyes flathub io.github.brunofin.Cohesion
 flatpak install --assumeyes flathub it.mijorus.gearlever
 
 #NVM
