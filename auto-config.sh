@@ -178,6 +178,7 @@ flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/fl
 #Flatpaks
 flatpak install --assumeyes flathub org.telegram.desktop
 flatpak install --assumeyes flathub com.discordapp.DiscordCanary
+flatpak install --assumeyes flathub com.bitwarden.desktop
 flatpak install --assumeyes flathub com.spotify.Client
 flatpak install --assumeyes flathub com.valvesoftware.Steam
 flatpak install --assumeyes flathub org.gnome.Boxes
