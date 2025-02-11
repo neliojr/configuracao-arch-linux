@@ -172,9 +172,12 @@ sudo pacman -S --noconfirm dkms linux-headers
 cd ~/Downloads/xpadneo
 sudo ./install.sh
 
+#Ativando repositório beta do flatpak
+flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+
 #Flatpaks
 flatpak install --assumeyes flathub org.telegram.desktop
-flatpak install --assumeyes flathub dev.vencord.Vesktop
+flatpak install --assumeyes flathub com.discordapp.DiscordCanary
 flatpak install --assumeyes flathub com.spotify.Client
 flatpak install --assumeyes flathub com.valvesoftware.Steam
 flatpak install --assumeyes flathub org.gnome.Boxes
@@ -185,7 +188,6 @@ flatpak install --assumeyes flathub com.getpostman.Postman
 flatpak install --assumeyes flathub org.mozilla.Thunderbird
 flatpak install --assumeyes flathub org.qbittorrent.qBittorrent
 flatpak install --assumeyes flathub com.visualstudio.code
-flatpak install --assumeyes flathub it.mijorus.gearlever
 
 #NVM
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
