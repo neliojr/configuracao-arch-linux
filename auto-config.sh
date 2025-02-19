@@ -160,7 +160,7 @@ else
 fi
 
 #Instalando apps
-sudo pacman -S --noconfirm vlc putty gnome-browser-connector flatpak git cronie crocs
+sudo pacman -S --noconfirm vlc putty gnome-browser-connector flatpak git cronie croc gnome-boxes
 
 #Configurando git
 git config --global user.name "Nelio Júnior"
@@ -181,7 +181,6 @@ flatpak install --assumeyes flathub com.discordapp.DiscordCanary
 flatpak install --assumeyes flathub com.bitwarden.desktop
 flatpak install --assumeyes flathub com.spotify.Client
 flatpak install --assumeyes flathub com.valvesoftware.Steam
-flatpak install --assumeyes flathub org.gnome.Boxes
 flatpak install --assumeyes flathub net.lutris.Lutris
 flatpak install --assumeyes flathub org.gimp.GIMP
 flatpak install --assumeyes flathub org.inkscape.Inkscape
