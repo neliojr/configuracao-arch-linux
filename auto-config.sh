@@ -160,7 +160,7 @@ else
 fi
 
 #Instalando apps
-sudo pacman -S --noconfirm vlc putty gnome-browser-connector flatpak git cronie
+sudo pacman -S --noconfirm vlc putty gnome-browser-connector flatpak git cronie crocs
 
 #Configurando git
 git config --global user.name "Nelio Júnior"
