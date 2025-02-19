@@ -1,4 +1,8 @@
 #!/bin/bash
+username = "nelio"
+name = "Nelio Júnior"
+email = "neliojr@neliojr.me"
+
 clear
 echo 'Iniciando configuração do sistema em 10s.'
 echo 'Pressione CTRL + C para cancelar.'
@@ -29,10 +33,10 @@ sudo systemctl start cronie.service
 
 #Personalização
 #Alterando cor do usuário no terminal
-rm ~/.bashrc
-cat << EOF > ~/.bashrc
+rm /home/$username/.bashrc
+cat << EOF > /home/$username/.bashrc
 #
-# ~/.bashrc
+# /home/$username/.bashrc
 #
 
 # If not running interactively, don't do anything
@@ -49,7 +53,7 @@ else
     PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;32m\]\w\[\033[00m\]$ '
 fi
 EOF
-sudo ln -sf /home/nelio/.bashrc /root/.bashrc
+sudo ln -sf /home/$username/.bashrc /root/.bashrc
 #Ativando cor no pacman.
 sudo sed -i 's/#Color/Color/g' /etc/pacman.conf
 #Alterando quantidade de downloads paralelos
@@ -63,7 +67,7 @@ resposta=$(echo $resposta | tr 'a-z' 'A-Z')
 if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
     sudo pacman -S --noconfirm rclone
     rclone config
-    mkdir -p ~/Documentos/Scripts/Logs
+    mkdir -p /home/$username/Documentos/Scripts/Logs
 
     #Configurando serviço para montar o OneDrive com o systemctl
     #Montador do cloud.
@@ -75,8 +79,8 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/rclone mount OneDrive: /home/nelio/.mycloud \
-    --log-file /home/nelio/Documentos/Scripts/Logs/rclone-mount.log \
+ExecStart=/usr/bin/rclone mount OneDrive: /home/$username/.mycloud \
+    --log-file /home/$username/Documentos/Scripts/Logs/rclone-mount.log \
     --vfs-cache-mode full \
     --vfs-cache-max-size 2G \
     --vfs-cache-max-age 10m \
@@ -93,7 +97,7 @@ ExecStart=/usr/bin/rclone mount OneDrive: /home/nelio/.mycloud \
     --buffer-size 32M \
     --vfs-read-chunk-size 1M \
     --vfs-read-chunk-size-limit 128M
-ExecStop=/bin/fusermount -uz /home/nelio/.mycloud
+ExecStop=/bin/fusermount -uz /home/$username/.mycloud
 Restart=on-failure
 User=nelio
 Group=nelio
@@ -115,10 +119,10 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/rclone sync /home/nelio/Documentos OneDrive:/Documentos --progress
-ExecStart=/usr/bin/rclone sync /home/nelio/Downloads OneDrive:/Downloads --progress
-ExecStart=/usr/bin/rclone sync /home/nelio/Imagens OneDrive:/Imagens --progress
-ExecStart=/usr/bin/rclone sync /home/nelio/Vídeos OneDrive:/Videos --progress
+ExecStart=/usr/bin/rclone sync /home/$username/Documentos OneDrive:/Documentos --progress
+ExecStart=/usr/bin/rclone sync /home/$username/Downloads OneDrive:/Downloads --progress
+ExecStart=/usr/bin/rclone sync /home/$username/Imagens OneDrive:/Imagens --progress
+ExecStart=/usr/bin/rclone sync /home/$username/Vídeos OneDrive:/Videos --progress
 User=nelio
 Group=nelio
 Nice=10
@@ -146,11 +150,11 @@ EOF
     sudo systemctl enable --now rclone-sync.timer
 
     #Baixando pastas do OneDrive para o /home/user
-    mkdir ~/.mycloud
-    rclone sync OneDrive:/Documentos ~/Documentos --progress
-    rclone sync OneDrive:/Downloads ~/Downloads --progress
-    rclone sync OneDrive:/Imagens ~/Imagens --progress
-    rclone sync OneDrive:/Videos ~/Vídeos --progress
+    mkdir /home/$username/.mycloud
+    rclone sync OneDrive:/Documentos /home/$username/Documentos --progress
+    rclone sync OneDrive:/Downloads /home/$username/Downloads --progress
+    rclone sync OneDrive:/Imagens /home/$username/Imagens --progress
+    rclone sync OneDrive:/Videos /home/$username/Vídeos --progress
 else
     echo "Você escolheu não instalar e configurar o rclone."
 fi
@@ -159,13 +163,13 @@ fi
 sudo pacman -S --noconfirm vlc putty gnome-browser-connector flatpak git cronie croc gnome-boxes
 
 #Configurando git
-git config --global user.name "Nelio Júnior"
-git config --global user.email neliojr@neliojr.me
+git config --global user.name "$name"
+git config --global user.email $email
 
 #Baixando e instalando xpadneo (driver do controle xbox)
-git clone https://github.com/atar-axis/xpadneo.git ~/Downloads/xpadneo
+git clone https://github.com/atar-axis/xpadneo.git /home/$username/Downloads/xpadneo
 sudo pacman -S --noconfirm dkms linux-headers
-cd ~/Downloads/xpadneo
+cd /home/$username/Downloads/xpadneo
 sudo ./install.sh
 
 #Ativando repositório beta do flatpak
