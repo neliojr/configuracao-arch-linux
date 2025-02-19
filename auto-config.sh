@@ -151,10 +151,6 @@ EOF
     rclone sync OneDrive:/Downloads ~/Downloads --progress
     rclone sync OneDrive:/Imagens ~/Imagens --progress
     rclone sync OneDrive:/Videos ~/Vídeos --progress
-
-    #Adicionando cron
-    (crontab -l; echo "*/15 * * * * ~/Documentos/Scripts/rclone-sync.sh") | crontab -
-    chmod +x ~/Documentos/Scripts/rclone-sync.sh
 else
     echo "Você escolheu não instalar e configurar o rclone."
 fi
