@@ -156,7 +156,11 @@ else
 fi
 
 #Instalando apps
-sudo pacman -S --noconfirm vlc putty gnome-browser-connector flatpak git cronie croc gnome-boxes
+sudo pacman -S --noconfirm vlc putty docker crock git gnome-browser-connector flatpak cronie gnome-boxes
+
+#Confgurando docker
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
 
 #Configurando git
 git config --global user.name "Nelio Júnior"
