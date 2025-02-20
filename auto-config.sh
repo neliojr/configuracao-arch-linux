@@ -156,7 +156,7 @@ else
 fi
 
 #Instalando apps
-sudo pacman -S --noconfirm vlc putty docker crock git gnome-browser-connector flatpak cronie gnome-boxes
+sudo pacman -S --noconfirm vlc putty docker docker-compose crock git gnome-browser-connector flatpak cronie gnome-boxes
 
 #Confgurando docker
 sudo systemctl enable --now docker
@@ -188,6 +188,7 @@ flatpak install --assumeyes flathub com.getpostman.Postman
 flatpak install --assumeyes flathub org.mozilla.Thunderbird
 flatpak install --assumeyes flathub org.qbittorrent.qBittorrent
 flatpak install --assumeyes flathub com.visualstudio.code
+flatpak install --assumeyes flathub io.dbeaver.DBeaverCommunity
 
 #NVM
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
