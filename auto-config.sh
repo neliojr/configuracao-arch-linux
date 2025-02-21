@@ -155,8 +155,16 @@ else
     echo "Você escolheu não instalar e configurar o rclone."
 fi
 
+#Instalando yay (AUR helper)
+sudo pacman -S --needed base-devel git
+cd /opt
+sudo git clone https://aur.archlinux.org/yay.git
+sudo chown -R $USER:$USER ./yay
+cd yay
+makepkg -si
+
 #Instalando apps
-sudo pacman -S --noconfirm vlc putty docker docker-compose crock git gnome-browser-connector flatpak cronie gnome-boxes
+sudo pacman -S --noconfirm vlc putty docker docker-compose crock gnome-browser-connector flatpak cronie gnome-boxes
 
 #Confgurando docker
 sudo systemctl enable --now docker
