@@ -200,6 +200,7 @@ flatpak install --assumeyes flathub org.mozilla.Thunderbird
 flatpak install --assumeyes flathub org.qbittorrent.qBittorrent
 flatpak install --assumeyes flathub io.dbeaver.DBeaverCommunity
 flatpak install --assumeyes flathub org.audacityteam.Audacity
+flatpak install --assumeyes flathub org.libreoffice.LibreOffice
 
 #NVM
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
