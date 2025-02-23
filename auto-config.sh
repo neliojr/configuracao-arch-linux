@@ -163,6 +163,9 @@ sudo chown -R $USER:$USER ./yay
 cd yay
 makepkg -si
 
+#Instalando Visual Studio Code com yay sem confirmação
+yay -S --noconfirm visual-studio-code-bin
+
 #Instalando apps
 sudo pacman -S --noconfirm vlc putty docker docker-compose crock gnome-browser-connector flatpak cronie gnome-boxes
 
@@ -195,7 +198,6 @@ flatpak install --assumeyes flathub org.inkscape.Inkscape
 flatpak install --assumeyes flathub com.getpostman.Postman
 flatpak install --assumeyes flathub org.mozilla.Thunderbird
 flatpak install --assumeyes flathub org.qbittorrent.qBittorrent
-flatpak install --assumeyes flathub com.visualstudio.code
 flatpak install --assumeyes flathub io.dbeaver.DBeaverCommunity
 
 #NVM
