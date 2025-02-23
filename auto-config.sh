@@ -199,6 +199,7 @@ flatpak install --assumeyes flathub com.getpostman.Postman
 flatpak install --assumeyes flathub org.mozilla.Thunderbird
 flatpak install --assumeyes flathub org.qbittorrent.qBittorrent
 flatpak install --assumeyes flathub io.dbeaver.DBeaverCommunity
+flatpak install --assumeyes flathub org.audacityteam.Audacity
 
 #NVM
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
