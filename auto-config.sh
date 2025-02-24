@@ -197,7 +197,7 @@ flatpak install --assumeyes flathub org.gimp.GIMP
 flatpak install --assumeyes flathub org.inkscape.Inkscape
 flatpak install --assumeyes flathub com.getpostman.Postman
 flatpak install --assumeyes flathub org.mozilla.Thunderbird
-flatpak install --assumeyes flathub org.qbittorrent.qBittorrent
+flatpak install --assumeyes flathub de.haeckerfelix.Fragments
 flatpak install --assumeyes flathub io.dbeaver.DBeaverCommunity
 flatpak install --assumeyes flathub org.audacityteam.Audacity
 flatpak install --assumeyes flathub org.libreoffice.LibreOffice
