@@ -163,8 +163,8 @@ sudo chown -R $USER:$USER ./yay
 cd yay
 makepkg -si
 
-#Instalando Visual Studio Code com yay sem confirmação
-yay -S --noconfirm visual-studio-code-bin
+#Instalando Visual Studio Code e Steam pelo yay
+yay -S --noconfirm visual-studio-code-bin steam
 
 #Instalando apps
 sudo pacman -S --noconfirm vlc putty docker docker-compose crock gnome-browser-connector flatpak cronie gnome-boxes
@@ -191,7 +191,6 @@ flatpak install --assumeyes flathub org.telegram.desktop
 flatpak install --assumeyes flathub com.discordapp.DiscordCanary
 flatpak install --assumeyes flathub com.bitwarden.desktop
 flatpak install --assumeyes flathub com.spotify.Client
-flatpak install --assumeyes flathub com.valvesoftware.Steam
 flatpak install --assumeyes flathub net.lutris.Lutris
 flatpak install --assumeyes flathub org.gimp.GIMP
 flatpak install --assumeyes flathub org.inkscape.Inkscape
