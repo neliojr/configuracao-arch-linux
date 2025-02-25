@@ -4,9 +4,9 @@ Este repositório contém minhas descobertas, dicas e ajustes no Arch Linux, org
 
 ## Conteúdo
 
-- [Drivers](drivers/menu.md)
+- [Snapshots](snapshots/snapshots_btrfs.md)
 
-- [Apps](apps/menu.md)
+- [Drivers](drivers/menu.md)
 
 - [Extensões](extensões/menu.md)
 
