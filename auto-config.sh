@@ -155,6 +155,16 @@ EOF
 else
     echo "Você escolheu não instalar e configurar o rclone."
 fi
+#Instalando apps
+sudo pacman -S --noconfirm timeshift vlc putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+
+#Confgurando docker
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+
+#Configurando git
+git config --global user.name "Nelio Júnior"
+git config --global user.email neliojr@neliojr.me
 
 #Instalando yay (AUR helper)
 sudo pacman -S --noconfirm --needed base-devel git
@@ -166,17 +176,6 @@ makepkg -si
 
 #Instalando Visual Studio Code e Steam pelo yay
 yay -S --noconfirm visual-studio-code-bin steam ngrok
-
-#Instalando apps
-sudo pacman -S --noconfirm timeshift vlc putty docker docker-compose crock gnome-browser-connector flatpak cronie gnome-boxes
-
-#Confgurando docker
-sudo systemctl enable --now docker
-sudo usermod -aG docker $USER
-
-#Configurando git
-git config --global user.name "Nelio Júnior"
-git config --global user.email neliojr@neliojr.me
 
 #Baixando e instalando xpadneo (driver do controle xbox)
 git clone https://github.com/atar-axis/xpadneo.git /home/nelio/Downloads/xpadneo
