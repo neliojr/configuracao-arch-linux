@@ -1,11 +1,12 @@
 #!/bin/bash
 clear
+echo "NÃO EXECUTE ESTE SCRIPT COMO ROOT!!!"
 echo 'Iniciando configuração do sistema em 10s.'
 echo 'Pressione CTRL + C para cancelar.'
 sleep 10
 
 #Atualizando repositório
-sudo pacman -Syu
+sudo pacman -Syu --noconfirm
 
 #Instalando drivers
 sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman
@@ -156,7 +157,7 @@ else
 fi
 
 #Instalando yay (AUR helper)
-sudo pacman -S --needed base-devel git
+sudo pacman -S --noconfirm --needed base-devel git
 cd /home/nelio/Downloads/
 sudo git clone https://aur.archlinux.org/yay.git
 sudo chown -R $USER:$USER ./yay
