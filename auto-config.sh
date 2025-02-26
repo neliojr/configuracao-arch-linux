@@ -164,10 +164,10 @@ cd yay
 makepkg -si
 
 #Instalando Visual Studio Code e Steam pelo yay
-yay -S --noconfirm visual-studio-code-bin steam
+yay -S --noconfirm visual-studio-code-bin steam ngrok
 
 #Instalando apps
-sudo pacman -S --noconfirm vlc putty docker docker-compose crock gnome-browser-connector flatpak cronie gnome-boxes
+sudo pacman -S --noconfirm timeshift vlc putty docker docker-compose crock gnome-browser-connector flatpak cronie gnome-boxes
 
 #Confgurando docker
 sudo systemctl enable --now docker
@@ -204,9 +204,5 @@ flatpak install --assumeyes flathub org.libreoffice.LibreOffice
 #NVM
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 nvm install node
-
-sudo btrfs subvolume snapshot -r / /.snapshots/@snapshot-home-$(date +%Y%m%d-%H%M%S)-"Sistema funcional"
-sudo btrfs subvolume snapshot -r /home /.snapshots/@snapshot-home-$(date +%Y%m%d-%H%M%S)-"/home funcional"
-
 
 echo 'Configuração finalizada.'
