@@ -157,7 +157,7 @@ fi
 
 #Instalando yay (AUR helper)
 sudo pacman -S --needed base-devel git
-cd /opt
+cd /home/nelio/Downloads/
 sudo git clone https://aur.archlinux.org/yay.git
 sudo chown -R $USER:$USER ./yay
 cd yay
