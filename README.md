@@ -4,6 +4,8 @@ Este repositório contém minhas descobertas, dicas e ajustes no Arch Linux, org
 
 ## Conteúdo
 
+- [Instalação](instalação/arch-e-gnome.md)
+
 - [Snapshots](snapshots/snapshots_btrfs.md)
 
 - [Drivers](drivers/menu.md)
