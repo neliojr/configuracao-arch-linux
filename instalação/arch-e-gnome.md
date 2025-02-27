@@ -333,6 +333,4 @@ Reinicie o sistema:
 ```bash
 reboot
 ```
-
-Agora, você deve estar pronto para usar o Arch Linux com GNOME!
 ```
