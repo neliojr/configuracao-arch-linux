@@ -28,7 +28,6 @@ Escolha o esquema de partição **GPT** e crie as seguintes partições:
 1. **Partição 1 (EFI System)**: 1GB, para o `/boot/efi`
 2. **Partição 2 (Linux swap)**, para o swap
 3. **Partição 3 (Linux filesystem)**, para a raiz `/`
-4. **Partição 4 (Linux filesystem)**, para o `/home`
 
 Após criar as partições, salve e saia.
 
@@ -49,11 +48,6 @@ Após criar as partições, salve e saia.
   mkfs.btrfs /dev/sda3
   ```
 
-- **Partição Home**: 
-  ```bash
-  mkfs.btrfs /dev/sda4
-  ```
-
 ## 3. Pontos de Montagem
 
 Monte as partições conforme abaixo:
@@ -63,22 +57,42 @@ Monte as partições conforme abaixo:
   mount /dev/sda3 /mnt
   ```
 
-- **Criando os diretórios**:
+- **Criando os subvolumes com Btrfs**:
   ```bash
-  mkdir /mnt/home
-  mkdir /mnt/boot
-  mkdir /mnt/boot/efi
+  btrfs subvolume create /mnt/@
+  btrfs subvolume create /mnt/@home
+  btrfs subvolume create /mnt/@log
+  btrfs subvolume create /mnt/@cache
   ```
 
-- **Montando as Partições**:
-  - Partição **/home**:
+- **Desmonte a raiz**:
+  ```bash
+  umount /mnt
+
+- **Montando as Partições e Subvolumes**:
+  - Partição **raiz**:
     ```bash
-    mount /dev/sda4 /mnt/home
+    mount -o relatime,compress=zstd,subvol=@ /dev/sda3 /mnt
     ```
 
-  - Partição **/boot** (desconsidere se for usar UEFI):
+  - Criando diretórios na **raiz**:
     ```bash
-    mount /dev/sda1 /mnt/boot
+    mkdir -p /mnt/{home,var/log,var/cache,boot/efi}
+    ```
+
+  - Subvolume **/home**:
+    ```bash
+    mount -o relatime,compress=zstd,subvol=@home /dev/sda3 /mnt/home
+    ```
+
+  - Subvolume **/var/log** (desconsidere se for usar UEFI):
+    ```bash
+    mount -o relatime,compress=zstd,subvol=@log /dev/sda3 /mnt/var/log
+    ```
+
+  - Subvolume **/var/cache** (desconsidere se for usar UEFI):
+    ```bash
+    mount -o relatime,compress=zstd,subvol=@cache /dev/sda3 /mnt/var/cache
     ```
 
   - Partição **/boot/efi**:
