@@ -76,7 +76,7 @@ Monte as partições conforme abaixo:
     mount /dev/sda4 /mnt/home
     ```
 
-  - Partição **/boot**:
+  - Partição **/boot** (desconsidere se for usar UEFI):
     ```bash
     mount /dev/sda1 /mnt/boot
     ```
