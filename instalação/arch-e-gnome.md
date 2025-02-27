@@ -1,4 +1,3 @@
-```markdown
 # Tutorial de Instalação do Arch Linux com GNOME
 
 Este tutorial ensina a instalação do Arch Linux com a interface gráfica GNOME, usando o sistema de arquivos Btrfs e configurando a rede de maneira otimizada.
