@@ -26,7 +26,7 @@ cfdisk /dev/sda
 
 Escolha o esquema de partição **GPT** e crie as seguintes partições:
 
-1. **Partição 1 (EFI System)**: 500MB, para o `/boot/efi`
+1. **Partição 1 (EFI System)**: 1GB, para o `/boot/efi`
 2. **Partição 2 (Linux swap)**, para o swap
 3. **Partição 3 (Linux filesystem)**, para a raiz `/`
 4. **Partição 4 (Linux filesystem)**, para o `/home`
