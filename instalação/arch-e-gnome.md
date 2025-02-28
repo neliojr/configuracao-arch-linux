@@ -85,12 +85,12 @@ Monte as partições conforme abaixo:
     mount -o relatime,compress=zstd,subvol=@home /dev/sda3 /mnt/home
     ```
 
-  - Subvolume **/var/log** (desconsidere se for usar UEFI):
+  - Subvolume **/var/log**:
     ```bash
     mount -o relatime,compress=zstd,subvol=@log /dev/sda3 /mnt/var/log
     ```
 
-  - Subvolume **/var/cache** (desconsidere se for usar UEFI):
+  - Subvolume **/var/cache**:
     ```bash
     mount -o relatime,compress=zstd,subvol=@cache /dev/sda3 /mnt/var/cache
     ```
@@ -317,10 +317,10 @@ sudo pacman -S wayland
 sudo pacman -S xf86-video-amdgpu
 ```
 
-### Instalando o GNOME e Firefox
+### Instalando o GNOME
 
 ```bash
-sudo pacman -S gnome gnome-terminal firefox
+sudo pacman -S gnome
 ```
 
 ### Instalando o GDM (Gerenciador de Exibição do GNOME)

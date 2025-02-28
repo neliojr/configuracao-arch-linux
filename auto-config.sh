@@ -170,7 +170,8 @@ git config --global user.email neliojr@neliojr.me
 sudo pacman -S --noconfirm --needed base-devel git
 cd /home/nelio/Downloads/
 sudo git clone https://aur.archlinux.org/yay.git
-sudo chown -R $USER:$USER ./yay
+sudo chmod 777 ./yay
+sudo chown -R $USER ./yay
 cd yay
 makepkg -si
 
