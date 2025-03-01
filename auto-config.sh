@@ -5,31 +5,60 @@ echo 'Iniciando configuração do sistema em 10s.'
 echo 'Pressione CTRL + C para cancelar.'
 sleep 10
 
-#Atualizando repositório
+# Atualizando repositório
 sudo pacman -Syu --noconfirm
 
-#Instalando drivers
-sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman
+# Instalando pacotes
+sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone dkms linux-headers ufw git timeshift vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+
+# Instalando yay (AUR helper)
+cd /home/nelio/Downloads/
+sudo git clone https://aur.archlinux.org/yay.git
+sudo chmod 777 ./yay
+sudo chown -R $USER ./yay
+cd yay
+makepkg -si
+
+# Instalando Visual Studio Code e Steam pelo yay
+yay -S --noconfirm visual-studio-code-bin steam ngrok
+
+# Desinstalando apps desnecessários.
+sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
+
+# Configurando bluetooth
 sudo sed -i 's/#AutoEnable=true /AutoEnable=true /g' /etc/bluetooth/main.conf
 sudo systemctl start bluetooth.service
 sudo systemctl enable bluetooth.service
 
-#Desinstalando apps desnecessários.
-sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
+# Baixando e instalando xpadneo (driver do controle xbox)
+git clone https://github.com/atar-axis/xpadneo.git /home/nelio/Downloads/xpadneo
+cd /home/nelio/Downloads/xpadneo
+sudo ./install.sh
 
-#Instalando firewall
-sudo pacman -S --noconfirm ufw
+# Configurando firewall
 sudo systemctl enable ufw
 sudo systemctl start ufw
 sudo ufw enable
 
-#Configurando apps
-#Cronie
+# Confgurando docker
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+
+# Configurando git
+git config --global user.name "Nelio Júnior"
+git config --global user.email neliojr@neliojr.me
+
+# Instalando NVM
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+nvm install node
+
+# Configurando apps
+# Cronie
 sudo systemctl enable cronie.service
 sudo systemctl start cronie.service
 
-#Personalização
-#Alterando cor do usuário no terminal
+# Personalização
+# Alterando cor do usuário no terminal
 rm /home/nelio/.bashrc
 cat << EOF > /home/nelio/.bashrc
 #
@@ -51,23 +80,27 @@ else
 fi
 EOF
 sudo ln -sf /home/nelio/.bashrc /root/.bashrc
-#Ativando cor no pacman.
+
+# Ativando cor no pacman.
 sudo sed -i 's/#Color/Color/g' /etc/pacman.conf
-#Alterando quantidade de downloads paralelos
+
+# Alterando quantidade de downloads paralelos
 sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
 
-#Configurando OneDrive com Rclone
-read -p "Deseja instalar e configurar o Rclone? [S/n]" resposta
+# Ativando repositório beta do flatpak
+flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+
+# Configurando OneDrive com Rclone
+read -p "Deseja configurar o Rclone? [S/n]" resposta
 
 resposta=$(echo $resposta | tr 'a-z' 'A-Z')
 
 if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
-    sudo pacman -S --noconfirm rclone
     rclone config
     mkdir -p /home/nelio/Documentos/Scripts/Logs
 
-    #Configurando serviço para montar o OneDrive com o systemctl
-    #Montador do cloud.
+    # Configurando serviço para montar o OneDrive com o systemctl
+    # Montador do cloud.
     sudo cat << EOF > /etc/systemd/system/rclone-mount.service
 [Unit]
 Description=Rclone Mount OneDrive
@@ -107,7 +140,7 @@ EOF
     sudo systemctl enable rclone-mount.service
     sudo systemctl start rclone-mount.service
 
-    #Sincronizador.
+    # Sincronizador.
     sudo cat << EOF > /etc/systemd/system/rclone-sync.service
 [Unit]
 Description=Sincronização de pastas com OneDrive via Rclone
@@ -130,7 +163,7 @@ IOSchedulingPriority=4
 WantedBy=multi-user.target
 EOF
 
-    #Timer do sincronizador.
+    # Timer do sincronizador.
     sudo cat << EOF > /etc/systemd/system/rclone-sync.timer
 [Unit]
 Description=Executa a sincronização do Rclone periodicamente
@@ -146,7 +179,7 @@ EOF
     sudo systemctl daemon-reload
     sudo systemctl enable --now rclone-sync.timer
 
-    #Baixando pastas do OneDrive para o /home/user
+    # Baixando pastas do OneDrive para o /home/user
     mkdir /home/nelio/.mycloud
     rclone sync OneDrive:/Documentos /home/nelio/Documentos --progress
     rclone sync OneDrive:/Downloads /home/nelio/Downloads --progress
@@ -155,39 +188,8 @@ EOF
 else
     echo "Você escolheu não instalar e configurar o rclone."
 fi
-#Instalando apps
-sudo pacman -S --noconfirm timeshift vlc putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 
-#Confgurando docker
-sudo systemctl enable --now docker
-sudo usermod -aG docker $USER
-
-#Configurando git
-git config --global user.name "Nelio Júnior"
-git config --global user.email neliojr@neliojr.me
-
-#Instalando yay (AUR helper)
-sudo pacman -S --noconfirm --needed base-devel git
-cd /home/nelio/Downloads/
-sudo git clone https://aur.archlinux.org/yay.git
-sudo chmod 777 ./yay
-sudo chown -R $USER ./yay
-cd yay
-makepkg -si
-
-#Instalando Visual Studio Code e Steam pelo yay
-yay -S --noconfirm visual-studio-code-bin steam ngrok
-
-#Baixando e instalando xpadneo (driver do controle xbox)
-git clone https://github.com/atar-axis/xpadneo.git /home/nelio/Downloads/xpadneo
-sudo pacman -S --noconfirm dkms linux-headers
-cd /home/nelio/Downloads/xpadneo
-sudo ./install.sh
-
-#Ativando repositório beta do flatpak
-flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
-
-#Flatpaks
+# Instalando flatpaks
 flatpak install --assumeyes flathub org.telegram.desktop
 flatpak install --assumeyes flathub com.discordapp.DiscordCanary
 flatpak install --assumeyes flathub com.bitwarden.desktop
@@ -201,9 +203,5 @@ flatpak install --assumeyes flathub de.haeckerfelix.Fragments
 flatpak install --assumeyes flathub io.dbeaver.DBeaverCommunity
 flatpak install --assumeyes flathub org.audacityteam.Audacity
 flatpak install --assumeyes flathub org.libreoffice.LibreOffice
-
-#NVM
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-nvm install node
 
 echo 'Configuração finalizada.'
