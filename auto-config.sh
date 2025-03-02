@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo "NÃO EXECUTE ESTE SCRIPT COMO ROOT!!!"
+echo 'NÃO EXECUTE ESTE SCRIPT COMO ROOT!!!'
 echo 'Iniciando configuração do sistema em 10s.'
 echo 'Pressione CTRL + C para cancelar.'
 sleep 10
