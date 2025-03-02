@@ -6,7 +6,7 @@ Este tutorial ensina a instalação do Arch Linux com a interface gráfica GNOME
 Para verificar a conectividade, use o comando:
 
 ```bash
-ping -c 4 google.com
+ping -c 4 skwren.com
 ```
 
 ## 2. Configuração do Disco
@@ -294,16 +294,10 @@ sudo dhcpcd
 Teste a conexão:
 
 ```bash
-ping -c 4 google.com
+ping -c 4 skwren.com
 ```
 
 ## 15. Instalando a Interface Gráfica GNOME
-
-### Instalando o Xorg
-
-```bash
-sudo pacman -S xorg-server xorg-xinit xorg-apps mesa
-```
 
 ### Instalando Wayland
 
@@ -321,12 +315,6 @@ sudo pacman -S xf86-video-amdgpu
 
 ```bash
 sudo pacman -S gnome
-```
-
-### Instalando o GDM (Gerenciador de Exibição do GNOME)
-
-```bash
-sudo pacman -S gdm
 ```
 
 Ative o serviço:
