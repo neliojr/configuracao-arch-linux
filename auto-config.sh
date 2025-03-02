@@ -9,7 +9,7 @@ sleep 10
 sudo pacman -Syu --noconfirm
 
 # Instalando pacotes
-sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone dkms linux-headers ufw git timeshift vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone dkms linux-headers neofetch git timeshift fuse2 vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 
 # Instalando yay (AUR helper)
 cd /home/nelio/Downloads/
@@ -101,6 +101,7 @@ if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
 
     # Configurando serviço para montar o OneDrive com o systemctl
     # Montador do cloud.
+    sudo su
     sudo cat << EOF > /etc/systemd/system/rclone-mount.service
 [Unit]
 Description=Rclone Mount OneDrive
@@ -130,16 +131,10 @@ ExecStart=/usr/bin/rclone mount OneDrive: /home/nelio/.mycloud \
 ExecStop=/bin/fusermount -uz /home/nelio/.mycloud
 Restart=on-failure
 User=nelio
-Group=nelio
 
 [Install]
 WantedBy=default.target
 EOF
-
-    sudo systemctl daemon-reload
-    sudo systemctl enable rclone-mount.service
-    sudo systemctl start rclone-mount.service
-
     # Sincronizador.
     sudo cat << EOF > /etc/systemd/system/rclone-sync.service
 [Unit]
@@ -154,7 +149,6 @@ ExecStart=/usr/bin/rclone sync /home/nelio/Downloads OneDrive:/Downloads --progr
 ExecStart=/usr/bin/rclone sync /home/nelio/Imagens OneDrive:/Imagens --progress
 ExecStart=/usr/bin/rclone sync /home/nelio/Vídeos OneDrive:/Videos --progress
 User=nelio
-Group=nelio
 Nice=10
 IOSchedulingClass=best-effort
 IOSchedulingPriority=4
@@ -176,8 +170,11 @@ Unit=rclone-sync.service
 [Install]
 WantedBy=timers.target
 EOF
+    exit
     sudo systemctl daemon-reload
     sudo systemctl enable --now rclone-sync.timer
+    sudo systemctl enable rclone-mount.service
+    sudo systemctl start rclone-mount.service
 
     # Baixando pastas do OneDrive para o /home/user
     mkdir /home/nelio/.mycloud
@@ -199,7 +196,7 @@ flatpak install --assumeyes flathub org.gimp.GIMP
 flatpak install --assumeyes flathub org.inkscape.Inkscape
 flatpak install --assumeyes flathub com.getpostman.Postman
 flatpak install --assumeyes flathub org.mozilla.Thunderbird
-flatpak install --assumeyes flathub org.qbittorrent.qBittorrent
+flatpak install --assumeyes flathub de.haeckerfelix.Fragments
 flatpak install --assumeyes flathub io.dbeaver.DBeaverCommunity
 flatpak install --assumeyes flathub org.audacityteam.Audacity
 flatpak install --assumeyes flathub org.libreoffice.LibreOffice
