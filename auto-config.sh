@@ -9,10 +9,10 @@ sleep 10
 sudo pacman -Syu --noconfirm
 
 # Instalando pacotes
-sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone dkms linux-headers neofetch wget git timeshift fuse2 vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone dkms linux-headers neofetch wget git timeshift fuse2 jdk-openjdk vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 
 # Ativando o multilib
-sudo sed -i '/^\[multilib\]/,/Include/s/^#//' /etc/pacman.conf
+sudo sed -i 's/^#\[multilib\]/[multilib]\nInclude = \/etc\/pacman.d\/mirrorlist/' /etc/pacman.conf
 
 # Atualizando repositório
 sudo pacman -Syu --noconfirm
