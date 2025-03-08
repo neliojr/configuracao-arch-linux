@@ -291,13 +291,19 @@ Ative a rede com:
 sudo dhcpcd
 ```
 
+Ative o serviço do NetworkManager:
+
+```bash
+systemctl enable NetworkManager
+```
+
 Teste a conexão:
 
 ```bash
 ping -c 4 skwren.com
 ```
 
-## 15. Instalando a Interface Gráfica GNOME
+## 15. Instalando a Interface Gráfica
 
 ### Instalando Wayland
 
@@ -311,7 +317,8 @@ sudo pacman -S wayland
 sudo pacman -S xf86-video-amdgpu
 ```
 
-### Instalando o GNOME
+<details>
+  <summary><b>Instalando o GNOME</b></summary>
 
 ```bash
 sudo pacman -S gnome
@@ -322,12 +329,21 @@ Ative o serviço:
 ```bash
 systemctl enable gdm
 ```
+</details>
 
-Ative o NetworkManager:
+<details>
+  <summary><b>Instalando o KDE Plasma</b></summary>
 
 ```bash
-systemctl enable NetworkManager
+sudo pacman -S plasma konsole
 ```
+
+Ative o serviço:
+
+```bash
+systemctl enable sddm
+```
+</details>
 
 Reinicie o sistema:
 
