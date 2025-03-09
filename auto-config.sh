@@ -9,7 +9,7 @@ sleep 10
 sudo pacman -Syu --noconfirm
 
 # Instalando pacotes
-sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone mangohud ufw dkms linux-headers neofetch wget git timeshift fuse2 jdk-openjdk vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone mangohud ufw dkms linux-headers neofetch lutris wget git timeshift fuse2 jdk-openjdk vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 
 # Ativando o multilib
 sudo sed -i 's/^#\[multilib\]/[multilib]\nInclude = \/etc\/pacman.d\/mirrorlist/' /etc/pacman.conf
@@ -197,7 +197,6 @@ flatpak install --assumeyes flathub org.telegram.desktop
 flatpak install --assumeyes flathub com.discordapp.DiscordCanary
 flatpak install --assumeyes flathub com.bitwarden.desktop
 flatpak install --assumeyes flathub com.spotify.Client
-flatpak install --assumeyes flathub net.lutris.Lutris
 flatpak install --assumeyes flathub org.gimp.GIMP
 flatpak install --assumeyes flathub org.inkscape.Inkscape
 flatpak install --assumeyes flathub com.getpostman.Postman
