@@ -9,7 +9,7 @@ sleep 10
 sudo pacman -Syu --noconfirm
 
 # Instalando pacotes
-sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone mangohud ufw dkms linux-headers neofetch lutris wget git timeshift fuse2 jdk-openjdk vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone mangohud ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp inkscape audacity wget git timeshift fuse2 jdk-openjdk vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 
 # Ativando o multilib
 sudo sed -i 's/^#\[multilib\]/[multilib]\nInclude = \/etc\/pacman.d\/mirrorlist/' /etc/pacman.conf
@@ -26,7 +26,7 @@ cd yay
 makepkg -si
 
 # Instalando Visual Studio Code e Steam pelo yay
-yay -S --noconfirm visual-studio-code-bin steam ngrok
+yay -S --noconfirm visual-studio-code-bin steam spotify discord-canary ngrok postman-bin  
 
 # Desinstalando apps desnecessários.
 sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
@@ -191,19 +191,5 @@ EOF
 else
     echo "Você escolheu não instalar e configurar o rclone."
 fi
-
-# Instalando flatpaks
-flatpak install --assumeyes flathub org.telegram.desktop
-flatpak install --assumeyes flathub com.discordapp.DiscordCanary
-flatpak install --assumeyes flathub com.bitwarden.desktop
-flatpak install --assumeyes flathub com.spotify.Client
-flatpak install --assumeyes flathub org.gimp.GIMP
-flatpak install --assumeyes flathub org.inkscape.Inkscape
-flatpak install --assumeyes flathub com.getpostman.Postman
-flatpak install --assumeyes flathub org.mozilla.Thunderbird
-flatpak install --assumeyes flathub de.haeckerfelix.Fragments
-flatpak install --assumeyes flathub io.dbeaver.DBeaverCommunity
-flatpak install --assumeyes flathub org.audacityteam.Audacity
-flatpak install --assumeyes flathub org.libreoffice.LibreOffice
 
 echo 'Configuração finalizada.'
