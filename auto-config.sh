@@ -8,6 +8,9 @@ sleep 10
 # Atualizando repositório.
 sudo pacman -Syu --noconfirm
 
+# Desinstalando apps desnecessários.
+sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
+
 # Instalando pacotes.
 sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone mangohud ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp inkscape qbittorrent audacity wget git timeshift fuse2 jdk-openjdk vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 
@@ -27,9 +30,6 @@ makepkg -si
 
 # Instalando Visual Studio Code e Steam pelo yay.
 yay -S --noconfirm visual-studio-code-bin steam spotify discord-canary ngrok postman-bin  
-
-# Desinstalando apps desnecessários.
-sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
 
 # Configurando bluetooth.
 sudo sed -i 's/#AutoEnable=true /AutoEnable=true /g' /etc/bluetooth/main.conf
