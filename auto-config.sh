@@ -102,13 +102,15 @@ read -p "Deseja configurar o Rclone? [S/n]" resposta
 resposta=$(echo $resposta | tr 'a-z' 'A-Z')
 
 if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
+    # criando pasta do rclone.
+    mkdir /home/nelio/.mycloud
+
     rclone config
     mkdir -p /home/nelio/Documentos/Scripts/Logs
 
     # Configurando serviço para montar o OneDrive com o systemctl
     # Montador do cloud.
-    sudo su
-    sudo cat << EOF > /etc/systemd/system/rclone-mount.service
+    sudo cat << EOF > /home/nelio/rclone-mount.service
 [Unit]
 Description=Rclone Mount OneDrive
 Wants=network-online.target
@@ -142,7 +144,7 @@ User=nelio
 WantedBy=default.target
 EOF
     # Sincronizador.
-    sudo cat << EOF > /etc/systemd/system/rclone-bisync.service
+    sudo cat << EOF > /home/nelio/rclone-bisync.service
 [Unit]
 Description=Sincronização bidirecional de pastas com OneDrive via Rclone
 After=network-online.target
@@ -164,7 +166,7 @@ WantedBy=multi-user.target
 EOF
 
     # Timer do sincronizador.
-    sudo cat << EOF > /etc/systemd/system/rclone-bisync.timer
+    sudo cat << EOF > /home/nelio/rclone-bisync.timer
 [Unit]
 Description=Executa a sincronização bidirecional do Rclone periodicamente
 
@@ -177,17 +179,13 @@ Unit=rclone-bisync.service
 WantedBy=timers.target
 EOF
     exit
+    sudo mv /home/nelio/rclone-mount.service /etc/systemd/system/
+    sudo mv /home/nelio/rclone-bisync.service /etc/systemd/system/
+    sudo mv /home/nelio/rclone-bisync.timer /etc/systemd/system/
     sudo systemctl daemon-reload
     sudo systemctl enable --now rclone-sync.timer
     sudo systemctl enable rclone-mount.service
     sudo systemctl start rclone-mount.service
-
-    # Baixando pastas do OneDrive para o /home/user.
-    mkdir /home/nelio/.mycloud
-    rclone sync OneDrive:/Documentos /home/nelio/Documentos --progress
-    rclone sync OneDrive:/Downloads /home/nelio/Downloads --progress
-    rclone sync OneDrive:/Imagens /home/nelio/Imagens --progress
-    rclone sync OneDrive:/Videos /home/nelio/Vídeos --progress
 else
     echo "Você escolheu não instalar e configurar o rclone."
 fi
