@@ -142,18 +142,18 @@ User=nelio
 WantedBy=default.target
 EOF
     # Sincronizador.
-    sudo cat << EOF > /etc/systemd/system/rclone-sync.service
+    sudo cat << EOF > /etc/systemd/system/rclone-bisync.service
 [Unit]
-Description=Sincronização de pastas com OneDrive via Rclone
+Description=Sincronização bidirecional de pastas com OneDrive via Rclone
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/rclone sync /home/nelio/Documentos OneDrive:/Documentos --progress
-ExecStart=/usr/bin/rclone sync /home/nelio/Downloads OneDrive:/Downloads --progress
-ExecStart=/usr/bin/rclone sync /home/nelio/Imagens OneDrive:/Imagens --progress
-ExecStart=/usr/bin/rclone sync /home/nelio/Vídeos OneDrive:/Videos --progress
+ExecStart=/usr/bin/rclone bisync /home/nelio/Documentos OneDrive:/Documentos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync /home/nelio/Downloads OneDrive:/Downloads --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync /home/nelio/Imagens OneDrive:/Imagens --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync /home/nelio/Vídeos OneDrive:/Vídeos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
 User=nelio
 Nice=10
 IOSchedulingClass=best-effort
@@ -164,14 +164,14 @@ WantedBy=multi-user.target
 EOF
 
     # Timer do sincronizador.
-    sudo cat << EOF > /etc/systemd/system/rclone-sync.timer
+    sudo cat << EOF > /etc/systemd/system/rclone-bisync.timer
 [Unit]
-Description=Executa a sincronização do Rclone periodicamente
+Description=Executa a sincronização bidirecional do Rclone periodicamente
 
 [Timer]
 OnBootSec=5min
 OnUnitActiveSec=15min
-Unit=rclone-sync.service
+Unit=rclone-bisync.service
 
 [Install]
 WantedBy=timers.target
