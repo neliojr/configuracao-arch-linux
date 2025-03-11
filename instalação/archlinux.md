@@ -116,7 +116,7 @@ lsblk
 Atualize os espelhos com o Reflector:
 
 ```bash
-sudo reflector --country "Brazil" --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+sudo reflector --country "Brazil" --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
 ```
 
 ## 5. Instalando Pacotes Essenciais

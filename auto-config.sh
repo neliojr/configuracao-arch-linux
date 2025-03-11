@@ -178,7 +178,6 @@ Unit=rclone-bisync.service
 [Install]
 WantedBy=timers.target
 EOF
-    exit
     sudo mv /home/nelio/rclone-mount.service /etc/systemd/system/
     sudo mv /home/nelio/rclone-bisync.service /etc/systemd/system/
     sudo mv /home/nelio/rclone-bisync.timer /etc/systemd/system/
