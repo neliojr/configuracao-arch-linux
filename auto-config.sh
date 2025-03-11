@@ -1,3 +1,10 @@
+#!/bin/bash
+
+# Autor: Nelio Júnior
+# Data: 11/03/2025
+# Descrição: Script de configuração automática do Arch Linux.
+# Versão: 2.0
+
 update_system() {
   # Atualiza o sistema.
   sudo pacman -Syu --noconfirm
