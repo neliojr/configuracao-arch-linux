@@ -26,6 +26,7 @@ install_yay() {
   sudo chown -R $USER ./yay
   cd yay
   makepkg -si
+  rm -rf $HOME/Downloads/yay
 }
 
 install_aur_packages() {
@@ -45,6 +46,7 @@ install_xpadneo() {
   git clone https://github.com/atar-axis/xpadneo.git $HOME/Downloads/xpadneo
   cd $HOME/Downloads/xpadneo
   sudo ./install.sh
+  rm -rf $HOME/Downloads/xpadneo
 }
 
 configure_firewall() {
