@@ -1,74 +1,70 @@
-#!/bin/bash
-clear
-echo 'NÃO EXECUTE ESTE SCRIPT COMO ROOT!!!'
-echo 'Iniciando configuração do sistema em 10s.'
-echo 'Pressione CTRL + C para cancelar.'
-sleep 10
+update_system() {
+  sudo pacman -Syu --noconfirm
+}
 
-# Atualizando repositório.
-sudo pacman -Syu --noconfirm
+remove_unnecessary_apps() {
+  sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
+}
 
-# Desinstalando apps desnecessários.
-sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
+install_packages() {
+  sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone mangohud ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp inkscape qbittorrent audacity wget git timeshift fuse2 jdk-openjdk vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+}
 
-# Instalando pacotes.
-sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone mangohud ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp inkscape qbittorrent audacity wget git timeshift fuse2 jdk-openjdk vlc ncdu putty docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+enable_multilib() {
+  sudo sed -i 's/^#\[multilib\]/[multilib]\nInclude = \/etc\/pacman.d\/mirrorlist/' /etc/pacman.conf
+}
 
-# Ativando o multilib.
-sudo sed -i 's/^#\[multilib\]/[multilib]\nInclude = \/etc\/pacman.d\/mirrorlist/' /etc/pacman.conf
+install_yay() {
+  cd $HOME/Downloads/
+  sudo git clone https://aur.archlinux.org/yay.git
+  sudo chmod 777 ./yay
+  sudo chown -R $USER ./yay
+  cd yay
+  makepkg -si
+}
 
-# Atualizando repositório.
-sudo pacman -Syu --noconfirm
+install_aur_packages() {
+  yay -S --noconfirm visual-studio-code-bin steam spotify discord-canary ngrok postman-bin
+}
 
-# Instalando yay (AUR helper).
-cd /home/nelio/Downloads/
-sudo git clone https://aur.archlinux.org/yay.git
-sudo chmod 777 ./yay
-sudo chown -R $USER ./yay
-cd yay
-makepkg -si
+configure_bluetooth() {
+  sudo sed -i 's/#AutoEnable=true /AutoEnable=true /g' /etc/bluetooth/main.conf
+  sudo systemctl start bluetooth.service
+  sudo systemctl enable bluetooth.service
+}
 
-# Instalando Visual Studio Code e Steam pelo yay.
-yay -S --noconfirm visual-studio-code-bin steam spotify discord-canary ngrok postman-bin  
+install_xpadneo() {
+  git clone https://github.com/atar-axis/xpadneo.git $HOME/Downloads/xpadneo
+  cd $HOME/Downloads/xpadneo
+  sudo ./install.sh
+}
 
-# Configurando bluetooth.
-sudo sed -i 's/#AutoEnable=true /AutoEnable=true /g' /etc/bluetooth/main.conf
-sudo systemctl start bluetooth.service
-sudo systemctl enable bluetooth.service
+configure_firewall() {
+  sudo systemctl enable ufw
+  sudo systemctl start ufw
+  sudo ufw enable
+}
 
-# Baixando e instalando xpadneo (driver do controle xbox).
-git clone https://github.com/atar-axis/xpadneo.git /home/nelio/Downloads/xpadneo
-cd /home/nelio/Downloads/xpadneo
-sudo ./install.sh
+configure_docker() {
+  sudo systemctl enable --now docker
+  sudo usermod -aG docker $USER
+}
 
-# Configurando firewall.
-sudo systemctl enable ufw
-sudo systemctl start ufw
-sudo ufw enable
+install_nvm() {
+  wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+  nvm install node
+}
 
-# Confgurando docker.
-sudo systemctl enable --now docker
-sudo usermod -aG docker $USER
+configure_cronie() {
+  sudo systemctl enable cronie.service
+  sudo systemctl start cronie.service
+}
 
-# Configurando git.
-git config --global user.name "Nelio Júnior"
-git config --global user.email neliojr@neliojr.me
-
-# Instalando NVM.
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-nvm install node
-
-# Configurando apps.
-# Cronie.
-sudo systemctl enable cronie.service
-sudo systemctl start cronie.service
-
-# Personalização.
-# Alterando cor do usuário no terminal.
-rm /home/nelio/.bashrc
-cat << EOF > /home/nelio/.bashrc
+customize_terminal() {
+  rm $HOME/.bashrc
+  cat << EOF > $HOME/.bashrc
 #
-# /home/nelio/.bashrc
+# $HOME/.bashrc
 #
 
 # If not running interactively, don't do anything
@@ -85,32 +81,30 @@ else
     PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;32m\]\w\[\033[00m\]$ '
 fi
 EOF
-sudo ln -sf /home/nelio/.bashrc /root/.bashrc
+  sudo ln -sf $HOME/.bashrc /root/.bashrc
+}
 
-# Ativando cor no pacman.
-sudo sed -i 's/#Color/Color/g' /etc/pacman.conf
+configure_pacman() {
+  sudo sed -i 's/#Color/Color/g' /etc/pacman.conf
+  sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
+}
 
-# Alterando quantidade de downloads paralelos.
-sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
+configure_flatpak() {
+  flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+}
 
-# Ativando repositório beta do flatpak.
-flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+configure_rclone() {
+  read -p "Deseja configurar o Rclone? [S/n]" resposta
 
-# Configurando OneDrive com Rclone.
-read -p "Deseja configurar o Rclone? [S/n]" resposta
+  resposta=$(echo $resposta | tr 'a-z' 'A-Z')
 
-resposta=$(echo $resposta | tr 'a-z' 'A-Z')
+  if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
+      mkdir $HOME/.mycloud
 
-if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
-    # criando pasta do rclone.
-    mkdir /home/nelio/.mycloud
+      rclone config
+      mkdir -p $HOME/Documentos/Scripts/Logs
 
-    rclone config
-    mkdir -p /home/nelio/Documentos/Scripts/Logs
-
-    # Configurando serviço para montar o OneDrive com o systemctl
-    # Montador do cloud.
-    sudo cat << EOF > /home/nelio/rclone-mount.service
+      sudo cat << EOF > $HOME/rclone-mount.service
 [Unit]
 Description=Rclone Mount OneDrive
 Wants=network-online.target
@@ -118,8 +112,8 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/rclone mount OneDrive: /home/nelio/.mycloud \
-    --log-file /home/nelio/Documentos/Scripts/Logs/rclone-mount.log \
+ExecStart=/usr/bin/rclone mount OneDrive: $HOME/.mycloud \
+    --log-file $HOME/Documentos/Scripts/Logs/rclone-mount.log \
     --vfs-cache-mode full \
     --vfs-cache-max-size 2G \
     --vfs-cache-max-age 10m \
@@ -136,15 +130,15 @@ ExecStart=/usr/bin/rclone mount OneDrive: /home/nelio/.mycloud \
     --buffer-size 32M \
     --vfs-read-chunk-size 1M \
     --vfs-read-chunk-size-limit 128M
-ExecStop=/bin/fusermount -uz /home/nelio/.mycloud
+ExecStop=/bin/fusermount -uz $HOME/.mycloud
 Restart=on-failure
-User=nelio
+User=$USER
 
 [Install]
 WantedBy=default.target
 EOF
-    # Sincronizador.
-    sudo cat << EOF > /home/nelio/rclone-bisync.service
+
+      sudo cat << EOF > $HOME/rclone-bisync.service
 [Unit]
 Description=Sincronização bidirecional de pastas com OneDrive via Rclone
 After=network-online.target
@@ -152,11 +146,11 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/rclone bisync /home/nelio/Documentos OneDrive:/Documentos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync /home/nelio/Downloads OneDrive:/Downloads --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync /home/nelio/Imagens OneDrive:/Imagens --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync /home/nelio/Vídeos OneDrive:/Vídeos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-User=nelio
+ExecStart=/usr/bin/rclone bisync $HOME/Documentos OneDrive:/Documentos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync $HOME/Downloads OneDrive:/Downloads --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync $HOME/Imagens OneDrive:/Imagens --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync $HOME/Vídeos OneDrive:/Vídeos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+User=$USER
 Nice=10
 IOSchedulingClass=best-effort
 IOSchedulingPriority=4
@@ -165,8 +159,7 @@ IOSchedulingPriority=4
 WantedBy=multi-user.target
 EOF
 
-    # Timer do sincronizador.
-    sudo cat << EOF > /home/nelio/rclone-bisync.timer
+      sudo cat << EOF > $HOME/rclone-bisync.timer
 [Unit]
 Description=Executa a sincronização bidirecional do Rclone periodicamente
 
@@ -178,15 +171,44 @@ Unit=rclone-bisync.service
 [Install]
 WantedBy=timers.target
 EOF
-    sudo mv /home/nelio/rclone-mount.service /etc/systemd/system/
-    sudo mv /home/nelio/rclone-bisync.service /etc/systemd/system/
-    sudo mv /home/nelio/rclone-bisync.timer /etc/systemd/system/
-    sudo systemctl daemon-reload
-    sudo systemctl enable --now rclone-sync.timer
-    sudo systemctl enable rclone-mount.service
-    sudo systemctl start rclone-mount.service
-else
-    echo "Você escolheu não instalar e configurar o rclone."
+
+      sudo mv $HOME/rclone-mount.service /etc/systemd/system/
+      sudo mv $HOME/rclone-bisync.service /etc/systemd/system/
+      sudo mv $HOME/rclone-bisync.timer /etc/systemd/system/
+      sudo systemctl daemon-reload
+      sudo systemctl enable --now rclone-bisync.timer
+      sudo systemctl enable rclone-mount.service
+      sudo systemctl start rclone-mount.service
+  else
+      echo "Você escolheu não instalar e configurar o rclone."
+  fi
+}
+
+main() {
+  update_system
+  remove_unnecessary_apps
+  install_packages
+  enable_multilib
+  update_system
+  install_yay
+  install_aur_packages
+  configure_bluetooth
+  install_xpadneo
+  configure_firewall
+  configure_docker
+  install_nvm
+  configure_cronie
+  customize_terminal
+  configure_pacman
+  configure_flatpak
+  configure_rclone
+
+  echo 'Configuração finalizada.'
+}
+
+if [ "$EUID" -eq 0 ]; then
+  echo "Por favor, não execute este script como root."
+  exit 1
 fi
 
-echo 'Configuração finalizada.'
+main
