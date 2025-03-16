@@ -10,6 +10,11 @@ update_system() {
   sudo pacman -Syu --noconfirm
 }
 
+enable_systemd-resolved() {
+  # Ativa o systemd-resolved para salvar cache do DNS.
+  sudo systemctl enable --now systemd-resolved
+}
+
 remove_unnecessary_apps() {
   # Remove aplicativos desnecessários.
   sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
@@ -225,8 +230,7 @@ EOF
       sudo mv $HOME/rclone-bisync-resync.service /etc/systemd/system/
       sudo mv $HOME/rclone-bisync.timer /etc/systemd/system/
       sudo systemctl daemon-reload
-      sudo systemctl enable rclone-mount.service
-      sudo systemctl start rclone-mount.service
+      sudo systemctl enable --now rclone-mount.service
       sleep 10
 
       # Sincroniza as pastas da nuvem com o computador.
@@ -241,6 +245,7 @@ EOF
 
 main() {
   update_system
+  enable_systemd-resolved
   remove_unnecessary_apps
   install_packages
   enable_multilib
