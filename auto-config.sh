@@ -117,6 +117,26 @@ configure_pacman() {
   sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
 }
 
+customize_mangohud() {
+  # Cria o arquivo de configuração do MangoHud.
+  mkdir -p $HOME/.config/MangoHud
+  cat << EOF > $HOME/.config/MangoHud/MangoHud.conf
+no_display
+toggle_hud=Shift+F12
+gpu_fan=1
+gpu_name
+gpu_voltage
+gpu_mem_clock
+gpu_core_clock
+gpu_power
+cpu_power
+cpu_mhz
+ram
+vram
+swap
+EOF
+}
+
 configure_flatpak() {
   # Adiciona o repositório beta do Flathub.
   flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
@@ -261,6 +281,7 @@ main() {
   customize_terminal
   configure_pacman
   configure_flatpak
+  customize_mangohud
   configure_rclone
 
   echo 'Configuração finalizada.'
