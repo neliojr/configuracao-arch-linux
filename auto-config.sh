@@ -22,7 +22,36 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm bluez bluez-utils bluez-tools blueman rclone mangohud wine reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity wget git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+  sudo pacman -S --noconfirm zsh bluez bluez-utils bluez-tools blueman rclone mangohud wine reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity wget git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+}
+
+configure_zsh() {
+  # Define o Zsh como shell padrão.
+  sudo chsh -s /bin/zsh $USER
+  sudo chsh -s /bin/zsh root
+
+  # Instala o Oh My Zsh.
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  
+  # Instala o plugin Zsh Autosuggestions e Zsh Syntax Highlighting.
+  git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+  
+  # Configura o Zsh.
+  sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/g' $HOME/.zshrc
+  sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' $HOME/.zshrc
+  
+  # Configura o Zsh para o root.
+  sudo -i
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  
+  # Instala o plugin Zsh Autosuggestions e Zsh Syntax Highlighting.
+  git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+  
+  # Configura o Zsh.
+  sudo sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/g' $HOME/.zshrc
+  sudo sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' $HOME/.zshrc
 }
 
 enable_multilib() {
@@ -84,31 +113,6 @@ configure_cronie() {
   # Ativa o serviço do cronie.
   sudo systemctl enable cronie.service
   sudo systemctl start cronie.service
-}
-
-customize_terminal() {
-  # Adiciona cor ao bash no terminal.
-  rm $HOME/.bashrc
-  cat << EOF > $HOME/.bashrc
-#
-# $HOME/.bashrc
-#
-
-# If not running interactively, don't do anything
-[[ \$- != *i* ]] && return
-
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
-export EDITOR=nano
-
-# Prompt color.
-if [[ \$EUID == 0 ]]; then
-    PS1='\[\033[01;95m\]\u@\h\[\033[00m\]:\[\033[01;95m\]\w\[\033[00m\]# '
-else
-    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$ '
-fi
-EOF
-  sudo ln -sf $HOME/.bashrc /root/.bashrc
 }
 
 configure_pacman() {
@@ -278,11 +282,11 @@ main() {
   configure_docker
   install_nvm
   configure_cronie
-  customize_terminal
   configure_pacman
   configure_flatpak
   customize_mangohud
   configure_rclone
+  configure_zsh
 
   echo 'Configuração finalizada.'
 }
