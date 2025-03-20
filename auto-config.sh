@@ -22,7 +22,7 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh bluez bluez-utils bluez-tools blueman rclone mangohud wine reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity wget git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+  sudo pacman -S --noconfirm zsh bluez bluez-utils bluez-tools blueman rclone mangohud wine reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 }
 
 configure_zsh() {
@@ -105,7 +105,7 @@ configure_docker() {
 
 install_nvm() {
   # Instala o NVM e o Node.js.
-  wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
   nvm install node
 }
 
