@@ -109,7 +109,7 @@ configure_docker() {
 
 install_nvm() {
   # Instala o NVM e o Node.js.
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | zsh
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
   nvm install node
 }
 
