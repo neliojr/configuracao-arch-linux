@@ -78,8 +78,7 @@ install_aur_packages() {
 configure_bluetooth() {
   # Configura o Bluetooth.
   sudo sed -i 's/#AutoEnable=true /AutoEnable=true /g' /etc/bluetooth/main.conf
-  sudo systemctl start bluetooth.service
-  sudo systemctl enable bluetooth.service
+  sudo systemctl enable --now bluetooth.service
 }
 
 install_xpadneo() {
@@ -105,7 +104,7 @@ configure_docker() {
 
 install_nvm() {
   # Instala o NVM e o Node.js.
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | zsh
   nvm install node
 }
 
