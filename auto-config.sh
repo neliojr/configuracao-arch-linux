@@ -22,7 +22,12 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh bluez bluez-utils bluez-tools blueman rclone mangohud wine reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+  sudo pacman -S --noconfirm zsh bluez bluez-utils bluez-tools blueman rclone mangohud wine reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie virt-manager dnsmasq swtpm
+}
+
+configure_virt-manager() {
+  sudo systemctl enable --now libvirtd
+  sudo virsh net-start default
 }
 
 configure_zsh() {
@@ -272,6 +277,7 @@ main() {
   remove_unnecessary_apps
   install_packages
   enable_multilib
+  configure_virt-manager
   update_system
   install_yay
   install_aur_packages
