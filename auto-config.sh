@@ -3,7 +3,7 @@
 # Autor: Nelio Júnior
 # Data: 11/03/2025
 # Descrição: Script de configuração automática do Arch Linux.
-# Versão: 2.0
+# Versão: 2.1
 
 update_system() {
   # Atualiza o sistema.
@@ -22,7 +22,7 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh bluez bluez-utils bluez-tools blueman rclone mangohud wine reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+  sudo pacman -S --noconfirm zsh btrfs-progs bluez bluez-utils bluez-tools blueman rclone wine mangohud reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 }
 
 configure_zsh() {
@@ -34,24 +34,16 @@ configure_zsh() {
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   
   # Instala o plugin Zsh Autosuggestions e Zsh Syntax Highlighting.
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+  git clone https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
   
   # Configura o Zsh.
   sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/g' $HOME/.zshrc
   sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' $HOME/.zshrc
   
   # Configura o Zsh para o root.
-  sudo -i
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  
-  # Instala o plugin Zsh Autosuggestions e Zsh Syntax Highlighting.
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
-  
-  # Configura o Zsh.
-  sudo sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/g' $HOME/.zshrc
-  sudo sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' $HOME/.zshrc
+  sudo -i ln -s $HOME/.oh-my-zsh /root/.oh-my-zsh
+  sudo -i ln -s $HOME/.zshrc /root/.zshrc
 }
 
 enable_multilib() {
@@ -203,6 +195,7 @@ ExecStart=/usr/bin/rclone bisync $HOME/Documentos OneDrive:/Documentos --max-del
 ExecStart=/usr/bin/rclone bisync $HOME/Downloads OneDrive:/Downloads --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
 ExecStart=/usr/bin/rclone bisync $HOME/Imagens OneDrive:/Imagens --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
 ExecStart=/usr/bin/rclone bisync $HOME/Vídeos OneDrive:/Vídeos --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync $HOME/Músicas OneDrive:/Músicas --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
 User=$USER
 Nice=10
 IOSchedulingClass=best-effort
@@ -225,6 +218,7 @@ ExecStart=/usr/bin/rclone bisync $HOME/Documentos OneDrive:/Documentos --create-
 ExecStart=/usr/bin/rclone bisync $HOME/Downloads OneDrive:/Downloads --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
 ExecStart=/usr/bin/rclone bisync $HOME/Imagens OneDrive:/Imagens --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
 ExecStart=/usr/bin/rclone bisync $HOME/Vídeos OneDrive:/Vídeos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
+ExecStart=/usr/bin/rclone bisync $HOME/Músicas OneDrive:/Músicas --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
 User=$USER
 Nice=10
 IOSchedulingClass=best-effort
@@ -267,12 +261,11 @@ EOF
 }
 
 main() {
-  update_system
   enable_systemd-resolved
-  remove_unnecessary_apps
-  install_packages
   enable_multilib
   update_system
+  remove_unnecessary_apps
+  install_packages
   install_yay
   install_aur_packages
   configure_bluetooth

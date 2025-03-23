@@ -1,4 +1,4 @@
-# Tutorial de Instalação do Arch Linux com GNOME e KDE
+# Tutorial de Instalação do Arch Linux com GNOME ou KDE
 
 Este tutorial ensina a instalação do Arch Linux com a interface gráfica GNOME ou KDE, usando o sistema de arquivos Btrfs e configurando a rede de maneira otimizada.
 
@@ -190,12 +190,6 @@ pt_BR ISO-8859-1
 locale-gen
 ```
 
-- Configure a variável de linguagem:
-
-```bash
-echo KEYMAP=br-abnt2 >> /etc/vconsole.conf
-```
-
 - Configure o hostname:
 
 ```bash
@@ -304,12 +298,6 @@ ping -c 4 skwren.com
 ```
 
 ## 15. Instalando a Interface Gráfica
-
-### Instalando Wayland
-
-```bash
-sudo pacman -S wayland
-```
 
 ### Instalando os Drivers AMD
 
