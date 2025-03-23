@@ -3,7 +3,7 @@
 # Autor: Nelio Júnior
 # Data: 11/03/2025
 # Descrição: Script de configuração automática do Arch Linux.
-# Versão: 2.1.1
+# Versão: 2.1.2
 
 update_system() {
   # Atualiza o sistema.
@@ -26,17 +26,67 @@ install_packages() {
 }
 
 configure_zsh() {
+  # Função para instalar o Oh My Zsh com tentativas
+  install_oh_my_zsh() {
+    local max_attempts=10 # Número máximo de tentativas
+    local attempt=1
+
+    echo "Instalando o Oh My Zsh..."
+    while [ $attempt -le $max_attempts ]; do
+        echo "Tentativa $attempt de $max_attempts..."
+        # Tenta baixar e instalar
+        if sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" 2>/dev/null; then
+            # Verifica se o diretório foi criado
+            if [ -d "$HOME/.oh-my-zsh" ]; then
+                echo "Oh My Zsh instalado com sucesso na tentativa $attempt!"
+                return 0  # Sucesso, sai da função
+            fi
+        fi
+        echo "Falha na tentativa $attempt. Tentando novamente em 5 segundos..."
+        sleep 5  # Aguarda 5 segundos antes da próxima tentativa
+        attempt=$((attempt + 1))
+    done
+
+    echo "Erro: Não foi possível instalar o Oh My Zsh após $max_attempts tentativas."
+    exit 1  # Falha após todas as tentativas
+  }
+
+  install_plugin() {
+    local repo_url="$1"
+    local target_dir="$2"
+    local max_attempts=10
+    local attempt=1
+
+    echo "Tentando instalar plugin em $target_dir..."
+    while [ $attempt -le $max_attempts ]; do
+        echo "Tentativa $attempt de $max_attempts..."
+        if git clone "$repo_url" "$target_dir" 2>/dev/null; then
+            if [ -d "$target_dir" ]; then
+                echo "Plugin instalado com sucesso em $target_dir na tentativa $attempt!"
+                return 0
+            fi
+        fi
+        echo "Falha na tentativa $attempt. Tentando novamente em 5 segundos..."
+        sleep 5
+        # Remove o diretório caso tenha sido criado parcialmente
+        [ -d "$target_dir" ] && rm -rf "$target_dir"
+        attempt=$((attempt + 1))
+    done
+
+    echo "Erro: Não foi possível instalar o plugin $repo_url após $max_attempts tentativas."
+    exit 1
+  }
+
   # Define o Zsh como shell padrão.
   sudo chsh -s /bin/zsh $USER
   sudo chsh -s /bin/zsh root
 
-  # Instala o Oh My Zsh.
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  # Executa a instalação do Oh My Zsh com tentativas.
+  install_oh_my_zsh
   
-  # Instala o plugin Zsh Autosuggestions e Zsh Syntax Highlighting.
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-  
+  # Instala o plugin Zsh Autosuggestions e Zsh Syntax Highlighting com tentativas.
+  install_plugin "https://github.com/zsh-users/zsh-autosuggestions.git" "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+  install_plugin "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
   # Configura o Zsh.
   sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/g' $HOME/.zshrc
   sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' $HOME/.zshrc
@@ -266,6 +316,7 @@ main() {
   update_system
   remove_unnecessary_apps
   install_packages
+  configure_zsh
   install_yay
   install_aur_packages
   configure_bluetooth
@@ -278,7 +329,6 @@ main() {
   configure_flatpak
   customize_mangohud
   configure_rclone
-  configure_zsh
 
   echo 'Configuração finalizada.'
 }
