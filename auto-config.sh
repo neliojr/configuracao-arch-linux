@@ -3,7 +3,7 @@
 # Autor: Nelio Júnior
 # Data: 11/03/2025
 # Descrição: Script de configuração automática do Arch Linux.
-# Versão: 2.1
+# Versão: 2.1.1
 
 update_system() {
   # Atualiza o sistema.
@@ -42,7 +42,7 @@ configure_zsh() {
   sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' $HOME/.zshrc
   
   # Configura o Zsh para o root.
-  sudo -i ln -s $HOME/.oh-my-zsh /root/.oh-my-zsh
+  sudo -i cp -r $HOME/.oh-my-zsh /root/
   sudo -i ln -s $HOME/.zshrc /root/.zshrc
 }
 
