@@ -3,7 +3,7 @@
 # Autor: Nelio Júnior
 # Data: 11/03/2025
 # Descrição: Script de configuração automática do Arch Linux.
-# Versão: 2.1.4
+# Versão: 2.1.5
 
 update_system() {
   # Atualiza o sistema.
@@ -124,44 +124,46 @@ configure_bluetooth() {
 }
 
 install_xpadneo() {
-    local repo_url="https://github.com/atar-axis/xpadneo.git"
-    local target_dir="$HOME/Downloads/xpadneo"
-    local max_attempts=10
-    local attempt=1
+  sudo modprobe uhid
+  local repo_url="https://github.com/atar-axis/xpadneo.git"
+  local target_dir="$HOME/Downloads/xpadneo"
+  local max_attempts=10
+  local attempt=1
 
-    echo "Tentando clonar o repositório xpadneo em $target_dir..."
-    while [ $attempt -le $max_attempts ]; do
-        echo "Tentativa $attempt de $max_attempts..."
-        if git clone "$repo_url" "$target_dir" 2>/dev/null; then
-            if [ -d "$target_dir" ]; then
-                echo "Repositório xpadneo clonado com sucesso na tentativa $attempt!"
-                # Prossegue com os próximos passos
-                cd "$target_dir" || {
-                    echo "Erro: Não foi possível entrar no diretório $target_dir."
-                    exit 1
-                }
-                echo "Executando o script de instalação..."
-                if sudo ./install.sh; then
-                    echo "Instalação concluída com sucesso!"
-                    # Remove o diretório após a instalação
-                    rm -rf "$target_dir"
-                    echo "Diretório $target_dir removido."
-                    return 0
-                else
-                    echo "Erro: Falha ao executar install.sh."
-                    exit 1
-                fi
-            fi
+  echo "Tentando clonar o repositório xpadneo em $target_dir..."
+  while [ $attempt -le $max_attempts ]; do
+    echo "Tentativa $attempt de $max_attempts..."
+    if git clone "$repo_url" "$target_dir" 2>/dev/null; then
+      if [ -d "$target_dir" ]; then
+        echo "Repositório xpadneo clonado com sucesso na tentativa $attempt!"
+        # Prossegue com os próximos passos
+        cd "$target_dir" || {
+          echo "Erro: Não foi possível entrar no diretório $target_dir."
+          exit 1
+        }
+        echo "Executando o script de instalação..."
+        if sudo ./install.sh; then
+          sudo modprobe hid-xpadneo
+          echo "Instalação concluída com sucesso!"
+          # Remove o diretório após a instalação
+          rm -rf "$target_dir"
+          echo "Diretório $target_dir removido."
+          return 0
+        else
+          echo "Erro: Falha ao executar install.sh."
+          exit 1
         fi
-        echo "Falha na tentativa $attempt. Tentando novamente em 5 segundos..."
-        sleep 5
-        # Remove o diretório caso tenha sido criado parcialmente
-        [ -d "$target_dir" ] && rm -rf "$target_dir"
-        attempt=$((attempt + 1))
-    done
+      fi
+    fi
+      echo "Falha na tentativa $attempt. Tentando novamente em 5 segundos..."
+      sleep 5
+      # Remove o diretório caso tenha sido criado parcialmente
+      [ -d "$target_dir" ] && rm -rf "$target_dir"
+      attempt=$((attempt + 1))
+  done
 
-    echo "Erro: Não foi possível clonar o repositório $repo_url após $max_attempts tentativas."
-    exit 1
+  echo "Erro: Não foi possível clonar o repositório $repo_url após $max_attempts tentativas."
+  exit 1
 }
 
 configure_firewall() {
