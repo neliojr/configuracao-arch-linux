@@ -343,6 +343,23 @@ EOF
   fi
 }
 
+add_disk_fstab() {
+  # Adiciona o disco ao fstab.
+  read -p "Deseja adicionar disco ao fstab? [S/n]" resposta
+
+  resposta=$(echo $resposta | tr 'a-z' 'A-Z')
+
+  if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
+    sudo blkid
+    read -p "Digite o UUID do disco: " uuid
+    read -p "Digite o ponto de montagem: " mount_point
+    read -p "Digite o tipo de sistema de arquivos: " fs_type
+    echo "UUID=$uuid $mount_point $fs_type defaults 0 0" | sudo tee -a /etc/fstab
+  else
+      echo "Você escolheu não configurar disco no fstab."
+  fi
+}
+
 main() {
   enable_systemd-resolved
   enable_multilib
@@ -360,6 +377,7 @@ main() {
   configure_pacman
   configure_flatpak
   customize_mangohud
+  add_disk_fstab
   configure_rclone
   install_xpadneo
 
