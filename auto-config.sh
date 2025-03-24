@@ -3,7 +3,7 @@
 # Autor: Nelio Júnior
 # Data: 11/03/2025
 # Descrição: Script de configuração automática do Arch Linux.
-# Versão: 2.1.3
+# Versão: 2.1.4
 
 update_system() {
   # Atualiza o sistema.
@@ -351,10 +351,11 @@ add_disk_fstab() {
 
   if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
     sudo blkid
+    read -p "Digite o nome do disco (ex: /dev/sda1): " name
     read -p "Digite o UUID do disco: " uuid
-    read -p "Digite o ponto de montagem: " mount_point
-    read -p "Digite o tipo de sistema de arquivos: " fs_type
-    echo "UUID=$uuid $mount_point $fs_type defaults 0 0" | sudo tee -a /etc/fstab
+    read -p "Digite o ponto de montagem (ex: /mnt/sda1): " mount_point
+    read -p "Digite o tipo de sistema de arquivos (ex: btrfs): " fs_type
+    echo -e "# $name\nUUID=$uuid $mount_point $fs_type defaults 0 0" | sudo tee -a /etc/fstab
   else
       echo "Você escolheu não configurar disco no fstab."
   fi
