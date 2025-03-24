@@ -353,7 +353,6 @@ main() {
   install_yay
   install_aur_packages
   configure_bluetooth
-  install_xpadneo
   configure_firewall
   configure_docker
   install_nvm
@@ -362,6 +361,7 @@ main() {
   configure_flatpak
   customize_mangohud
   configure_rclone
+  install_xpadneo
 
   echo 'Configuração finalizada.'
 }
