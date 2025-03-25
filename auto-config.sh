@@ -3,7 +3,7 @@
 # Autor: Nelio Júnior
 # Data: 11/03/2025
 # Descrição: Script de configuração automática do Arch Linux.
-# Versão: 2.1.5
+# Versão: 2.2
 
 update_system() {
   # Atualiza o sistema.
@@ -340,6 +340,9 @@ EOF
       
       # Ativa o serviço gatilho para o bisync.
       sudo systemctl enable --now rclone-bisync.timer
+
+      # Adiciona o Trezor Suite ao menu de aplicativos.
+      ln -s $HOME/Documentos/AppImages/trezor-suite.desktop $HOME/.local/share/applications/trezor-suite.desktop
   else
       echo "Você escolheu não instalar e configurar o rclone."
   fi
