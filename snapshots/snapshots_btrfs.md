@@ -1,15 +1,21 @@
 # Como gerenciar snapshots com BTRFS
 ## Instalando pacotes necessários
 Instale os seguintes pacotes para gerenciar as snapshots e adicionar o menu de snapshots ao GRUB:  
-`sudo pacman -S grub-btrfs inotify-tools timeshift`  
+```bash
+sudo pacman -S grub-btrfs inotify-tools timeshift
+```  
 Você poderá gerenciar as snapshots pela GUI do timeshift.
 
 Regenere o script do GRUB:  
-`grub-mkconfig -o /boot/grub/grub.cfg`  
+```bash
+grub-mkconfig -o /boot/grub/grub.cfg
+``` 
 
 ## Ativando serviço
 Para colocar automaticamente as snapshots ao menu do GRUB, ative o serviço do grub-btrfsd:  
-`sudo systemctl edit grub-btrfsd`  
+```bash
+sudo systemctl edit grub-btrfsd
+```  
 
 Após os comentários adicione:  
 ```bash
@@ -18,7 +24,11 @@ ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
 ```  
 
 Recarregue os serviços:  
-`sudo systemctl daemon-reload`  
+```bash
+sudo systemctl daemon-reload
+```
 
 Ative o serviço do grub-btrfsd:  
-`sudo systemctl enable —now grub-btrfsd`
+```bash
+sudo systemctl enable —now grub-btrfsd
+```
