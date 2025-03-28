@@ -1,14 +1,24 @@
 # Como gerenciar snapshots com BTRFS
-## Criando uma snapshot
-Para criar uma snapshot utilize o comando:  
-`sudo timeshift --create --comment "descrição"`  
-Esse comando criará uma snapshot da raiz "/"  
+## Instalando pacotes necessários
+Instale os seguintes pacotes para gerenciar as snapshots e adicionar o menu de snapshots ao GRUB:  
+`sudo pacman -S grub-btrfs inotify-tools timeshift`  
+Você poderá gerenciar as snapshots pela GUI do timeshift.
 
-## Apagando uma snapshot
-Caso deseje remover uma snapshot, utilize:  
-`sudo timeshift --delete --snapshot "nome"`  
+Regenere o script do GRUB:  
+`grub-mkconfig -o /boot/grub/grub.cfg`  
 
+## Ativando serviço
+Para colocar automaticamente as snapshots ao menu do GRUB, ative o serviço do grub-btrfsd:  
+`sudo systemctl edit grub-btrfsd`  
 
-## Listando todas snapshots
-Para listar todas as snapshots, utilize:  
-`sudo timeshift --list`
+Após os comentários adicione:  
+```bash
+[Service]
+ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
+```  
+
+Recarregue os serviços:  
+`sudo systemctl daemon-reload`  
+
+Ative o serviço do grub-btrfsd:  
+`sudo systemctl enable —now grub-btrfsd`

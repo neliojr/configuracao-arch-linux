@@ -22,7 +22,7 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh btrfs-progs bluez bluez-utils bluez-tools blueman rclone wine mangohud reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+  sudo pacman -S --noconfirm zsh btrfs-progs grub-btrfs inotify-tools bluez bluez-utils bluez-tools blueman rclone wine mangohud reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 }
 
 configure_zsh() {
@@ -87,6 +87,7 @@ configure_zsh() {
   # Instala o plugin Zsh Autosuggestions e Zsh Syntax Highlighting com tentativas.
   install_plugin "https://github.com/zsh-users/zsh-autosuggestions.git" "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
   install_plugin "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+ 
   # Configura o Zsh.
   sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/g' $HOME/.zshrc
   sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' $HOME/.zshrc
@@ -114,7 +115,7 @@ install_yay() {
 
 install_aur_packages() {
   # Instala pacotes AUR.
-  yay -S --noconfirm visual-studio-code-bin steam spotify discord-canary ngrok postman-bin
+  yay -S --noconfirm visual-studio-code-bin steam spotify discord ngrok postman-bin
 }
 
 configure_bluetooth() {
