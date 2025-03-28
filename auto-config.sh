@@ -10,6 +10,22 @@ update_system() {
   sudo pacman -Syu --noconfirm
 }
 
+configure_git() {
+  # Configura o usuário e email do Git.
+  read -p "Deseja configurar o Git? [S/n]" resposta
+
+  resposta=$(echo $resposta | tr 'a-z' 'A-Z')
+
+  if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
+    read -p "Digite o seu nome: " name
+    read -p "Digite o seu e-mail: " email
+    git config --global user.name "$name"
+    git config --global user.email $email
+  else
+      echo "Você escolheu não configurar o Git."
+  fi
+}
+
 enable_systemd-resolved() {
   # Ativa o systemd-resolved para salvar cache do DNS.
   sudo systemctl enable --now systemd-resolved
@@ -385,6 +401,7 @@ main() {
   configure_flatpak
   customize_mangohud
   add_disk_fstab
+  configure_git
   configure_rclone
   install_xpadneo
 
