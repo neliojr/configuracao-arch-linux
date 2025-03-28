@@ -30,5 +30,5 @@ sudo systemctl daemon-reload
 
 Ative o serviço do grub-btrfsd:  
 ```bash
-sudo systemctl enable —now grub-btrfsd
+sudo systemctl enable grub-btrfsd
 ```
