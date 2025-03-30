@@ -3,7 +3,7 @@
 # Autor: Nelio Júnior
 # Data: 11/03/2025
 # Descrição: Script de configuração automática do Arch Linux.
-# Versão: 2.2
+# Versão: 2.2.1
 
 update_system() {
   # Atualiza o sistema.
@@ -105,7 +105,7 @@ configure_zsh() {
   install_plugin "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
  
   # Configura o Zsh.
-  sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/g' $HOME/.zshrc
+  sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' $HOME/.zshrc
   sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' $HOME/.zshrc
   
   # Configura o Zsh para o root.

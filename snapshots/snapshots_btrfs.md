@@ -20,6 +20,7 @@ sudo systemctl edit grub-btrfsd
 Após os comentários adicione:  
 ```bash
 [Service]
+ExecStart=
 ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
 ```  
 
