@@ -38,7 +38,7 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh btrfs-progs grub-btrfs inotify-tools bluez bluez-utils bluez-tools blueman rclone wine mangohud reflector ufw dkms linux-headers neofetch lutris bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc ncdu docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
+  sudo pacman -S --noconfirm zsh btrfs-progs grub-btrfs inotify-tools bluez bluez-utils bluez-tools blueman rclone wine mangohud reflector ufw dkms linux-headers neofetch bitwarden telegram-desktop thunderbird gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc gnome-browser-connector flatpak cronie gnome-boxes
 }
 
 configure_zsh() {

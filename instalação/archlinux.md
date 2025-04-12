@@ -221,7 +221,7 @@ passwd nomedousuario
 Instale pacotes adicionais:
 
 ```bash
-pacman -S dosfstools os-prober mtools network-manager-applet networkmanager dialog
+pacman -S dosfstools mtools network-manager-applet networkmanager dialog
 ```
 
 ## 12. Instalando o GRUB
