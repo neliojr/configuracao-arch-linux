@@ -31,6 +31,11 @@ enable_systemd-resolved() {
   sudo systemctl enable --now systemd-resolved
 }
 
+install_ab_download_manager() {
+    # Instala o AB Download Manager.
+    bash <(curl -fsSL https://raw.githubusercontent.com/amir1376/ab-download-manager/master/scripts/install.sh)
+}
+
 remove_unnecessary_apps() {
   # Remove aplicativos desnecessários.
   sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
@@ -389,6 +394,7 @@ main() {
   update_system
   remove_unnecessary_apps
   install_packages
+  install_ab_download_manager
   configure_zsh
   install_yay
   install_aur_packages
