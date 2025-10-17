@@ -43,7 +43,7 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh bluez bluez-utils bluez-tools blueman rclone wine mangohud reflector ufw dkms linux-headers fastfetch telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc flatpak cronie partitionmanager okular gwenview
+  sudo pacman -S --noconfirm zsh rclone wine mangohud reflector ufw dkms linux-headers fastfetch protonmail-bridge proton-vpn-gtk-app telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc flatpak cronie partitionmanager okular gwenview
 }
 
 configure_zsh() {
@@ -136,7 +136,7 @@ install_yay() {
 
 install_aur_packages() {
   # Instala pacotes AUR.
-  yay -S --noconfirm visual-studio-code-bin steam spotify discord ngrok postman-bin
+  yay -S --noconfirm visual-studio-code-bin steam spotify discord postman-bin
 }
 
 configure_bluetooth() {
@@ -398,7 +398,6 @@ main() {
   configure_zsh
   install_yay
   install_aur_packages
-  configure_bluetooth
   configure_firewall
   configure_docker
   install_nvm
@@ -406,10 +405,8 @@ main() {
   configure_pacman
   configure_flatpak
   customize_mangohud
-  add_disk_fstab
   configure_git
   configure_rclone
-  install_xpadneo
 
   echo 'Configuração finalizada.'
 }
