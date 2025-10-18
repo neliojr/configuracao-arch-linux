@@ -1,15 +1,29 @@
 # Ativando secureboot
 Baixe o sbctl:  
-`sudo pacman -S sbctl`
+```bash
+sudo pacman -S sbctl`
+```
 
 Certifique-se que o secureboot está no modo setup:  
-`sbctl status`
+
+```bash
+sbctl status
+```
 
 Gere as chaves:  
-`sudo sbctl create-keys`
+
+```bash
+sudo sbctl create-keys
+```
 
 Verifique quais arquivos precisam de assinatura:  
-`sudo sbctl verify`
+
+```bash
+sudo sbctl verify
+```
 
 Assine todos os arquivos:  
-`sudo sbctl sign -s (diretório)`
+
+```bash
+sudo sbctl sign -s (diretório)
+```
