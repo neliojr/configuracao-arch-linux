@@ -27,3 +27,9 @@ Assine todos os arquivos:
 ```bash
 sudo sbctl sign -s (diretório)
 ```
+
+Verifique se todos os arquivos estão assinados:  
+
+```bash
+sudo sbctl verify
+```
