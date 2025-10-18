@@ -18,6 +18,7 @@ Este repositório contém minhas descobertas, dicas e ajustes no Arch Linux, org
 
 - [Comandos](comandos/comandos.md)
 
+- [Ativar firewall](segurança/secureboot.md)
 - [Ativar firewall](segurança/firewall.md)
 
 - [Como instalar um pacote .rpm](pacotes/rpm.md)
