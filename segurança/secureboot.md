@@ -1,7 +1,7 @@
 # Ativando secureboot
 Baixe o sbctl:  
 ```bash
-sudo pacman -S sbctl`
+sudo pacman -S sbctl
 ```
 
 Certifique-se que o secureboot está no modo setup:  
