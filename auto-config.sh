@@ -43,7 +43,7 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh rclone wine mangohud reflector ufw dkms linux-headers fastfetch protonmail-bridge proton-vpn-gtk-app telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc flatpak cronie partitionmanager okular gwenview
+  sudo pacman -S --noconfirm zsh nvm rclone wine mangohud reflector ufw dkms linux-headers fastfetch protonmail-bridge proton-vpn-gtk-app telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc flatpak cronie partitionmanager okular gwenview
 }
 
 configure_zsh() {
@@ -201,9 +201,11 @@ configure_docker() {
   sudo usermod -aG docker $USER
 }
 
-install_nvm() {
-  # Instala o NVM e o Node.js.
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+configure_nvm() {
+  # Configura o NVM no zsh.
+  echo "# Adicionando o comando do NVM no ambiente" >> ~/.zshrc
+  echo "source /usr/share/nvm/init-nvm.sh" >> ~/.zshrc
+  source /usr/share/nvm/init-nvm.sh
   nvm install node
 }
 
@@ -389,24 +391,7 @@ add_disk_fstab() {
 }
 
 main() {
-  enable_systemd-resolved
-  enable_multilib
-  update_system
-  remove_unnecessary_apps
-  install_packages
-  install_ab_download_manager
-  configure_zsh
-  install_yay
-  install_aur_packages
-  configure_firewall
-  configure_docker
-  install_nvm
-  configure_cronie
-  configure_pacman
-  configure_flatpak
-  customize_mangohud
-  configure_git
-  configure_rclone
+  configure_nvm
 
   echo 'Configuração finalizada.'
 }
