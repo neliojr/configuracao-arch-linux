@@ -10,6 +10,12 @@ update_system() {
   sudo pacman -Syu --noconfirm
 }
 
+numlock_on_init() {
+    # Ativa o NumLock na inicialização do sddm.
+    sudo echo "[General]" >> /etc/sddm.conf
+    sudo echo "NumLock=on" >> /etc/sddm.conf
+}
+
 configure_git() {
   # Configura o usuário e email do Git.
   read -p "Deseja configurar o Git? [S/n]" resposta
@@ -391,7 +397,26 @@ add_disk_fstab() {
 }
 
 main() {
-  configure_nvm
+  enable_systemd-resolved
+  enable_multilib
+  numlock_on_init
+  update_system
+  remove_unnecessary_apps
+  install_packages
+  install_ab_download_manager
+  configure_zsh
+  install_yay
+  install_aur_packages
+  configure_firewall
+  configure_docker
+  install_nvm
+  configure_cronie
+  configure_pacman
+  configure_flatpak
+  customize_mangohud
+  configure_git
+  add_disk_fstab
+  configure_rclone
 
   echo 'Configuração finalizada.'
 }
