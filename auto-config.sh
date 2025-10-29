@@ -52,6 +52,11 @@ install_packages() {
   sudo pacman -S --noconfirm zsh nvm rclone wine mangohud openrgb hplip cups reflector ufw dkms linux-headers fastfetch protonmail-bridge proton-vpn-gtk-app telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc flatpak cronie partitionmanager okular gwenview libreoffice-still-pt-br
 }
 
+configure_cups() {
+    # Ativa o serviço do CUPS.
+    sudo systemctl enable --now cups.service
+}
+
 configure_zsh() {
   # Função para instalar o Oh My Zsh com tentativas
   install_oh_my_zsh() {
@@ -405,6 +410,7 @@ main() {
   install_packages
   install_ab_download_manager
   configure_zsh
+  configure_cups
   install_yay
   install_aur_packages
   configure_firewall
