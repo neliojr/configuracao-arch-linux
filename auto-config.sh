@@ -49,7 +49,7 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh nvm rclone wine mangohud openrgb hplip cups reflector ufw dkms linux-headers fastfetch protonmail-bridge proton-vpn-gtk-app telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc flatpak cronie partitionmanager okular gwenview libreoffice-still-pt-br
+  sudo pacman -S --noconfirm zsh nvm rclone wine mangohud openrgb filezilla hplip cups reflector ufw dkms linux-headers fastfetch protonmail-bridge proton-vpn-gtk-app telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc flatpak cronie partitionmanager okular gwenview libreoffice-still-pt-br
 }
 
 configure_cups() {
