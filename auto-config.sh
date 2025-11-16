@@ -266,7 +266,7 @@ configure_rclone() {
       mkdir $HOME/.mycloud
 
       rclone config
-      mkdir -p $HOME/Documentos/Scripts/Logs
+      mkdir -p $HOME/Documents/Scripts/Logs
 
       # Cria o serviço de montagem do rclone.
       sudo cat << EOF > $HOME/rclone-mount.service
@@ -278,7 +278,7 @@ After=network-online.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/rclone mount OneDrive: $HOME/.mycloud \
-    --log-file $HOME/Documentos/Scripts/Logs/rclone-mount.log \
+    --log-file $HOME/Documents/Scripts/Logs/rclone-mount.log \
     --vfs-cache-mode full \
     --vfs-cache-max-size 2G \
     --vfs-cache-max-age 10m \
@@ -311,11 +311,11 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/rclone bisync $HOME/Documentos OneDrive:/Documentos --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync $HOME/Documents OneDrive:/Documents --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
 ExecStart=/usr/bin/rclone bisync $HOME/Downloads OneDrive:/Downloads --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync $HOME/Imagens OneDrive:/Imagens --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync $HOME/Vídeos OneDrive:/Vídeos --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync $HOME/Músicas OneDrive:/Músicas --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync $HOME/Pictures OneDrive:/Pictures --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync $HOME/Videos OneDrive:/Videos --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
+ExecStart=/usr/bin/rclone bisync $HOME/Music OneDrive:/Music --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
 User=$USER
 Nice=10
 IOSchedulingClass=best-effort
@@ -334,11 +334,11 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/rclone bisync $HOME/Documentos OneDrive:/Documentos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
+ExecStart=/usr/bin/rclone bisync $HOME/Documents OneDrive:/Documents --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
 ExecStart=/usr/bin/rclone bisync $HOME/Downloads OneDrive:/Downloads --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
-ExecStart=/usr/bin/rclone bisync $HOME/Imagens OneDrive:/Imagens --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
-ExecStart=/usr/bin/rclone bisync $HOME/Vídeos OneDrive:/Vídeos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
-ExecStart=/usr/bin/rclone bisync $HOME/Músicas OneDrive:/Músicas --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
+ExecStart=/usr/bin/rclone bisync $HOME/Pictures OneDrive:/Pictures --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
+ExecStart=/usr/bin/rclone bisync $HOME/Videos OneDrive:/Videos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
+ExecStart=/usr/bin/rclone bisync $HOME/Music OneDrive:/Music --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
 User=$USER
 Nice=10
 IOSchedulingClass=best-effort
@@ -377,7 +377,7 @@ EOF
       sudo systemctl enable --now rclone-bisync.timer
 
       # Adiciona o Trezor Suite ao menu de aplicativos.
-      ln -s $HOME/Documentos/AppImages/trezor-suite.desktop $HOME/.local/share/applications/trezor-suite.desktop
+      ln -s $HOME/Documents/AppImages/trezor-suite.desktop $HOME/.local/share/applications/trezor-suite.desktop
   else
       echo "Você escolheu não instalar e configurar o rclone."
   fi
