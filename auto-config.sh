@@ -12,8 +12,8 @@ update_system() {
 
 numlock_on_init() {
     # Ativa o NumLock na inicialização do sddm.
-    sudo echo "[General]" >> /etc/sddm.conf
-    sudo echo "NumLock=on" >> /etc/sddm.conf
+    echo "[General]" | sudo tee -a /etc/sddm.conf > /dev/null
+    echo "Numlock=on" | sudo tee -a /etc/sddm.conf > /dev/null
 }
 
 configure_git() {
@@ -25,8 +25,9 @@ configure_git() {
   if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
     read -p "Digite o seu nome: " name
     read -p "Digite o seu e-mail: " email
+
     git config --global user.name "$name"
-    git config --global user.email $email
+    git config --global user.email "$email"
   else
       echo "Você escolheu não configurar o Git."
   fi
@@ -49,7 +50,7 @@ remove_unnecessary_apps() {
 
 install_packages() {
   # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh nvm rclone wine steam mangohud openrgb filezilla discord spotify-launcher hplip cups reflector ufw dkms linux-headers fastfetch protonmail-bridge proton-vpn-gtk-app telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc flatpak cronie partitionmanager okular gwenview libreoffice-still-pt-br
+  sudo pacman -S --noconfirm zsh nvm rclone wine steam mangohud openrgb filezilla discord spotify-launcher hplip cups system-config-printer ufw dkms linux-headers fastfetch protonmail-bridge proton-vpn-gtk-app telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc docker docker-compose croc flatpak cronie partitionmanager okular gwenview libreoffice-still-pt-br
 }
 
 configure_cups() {
@@ -257,132 +258,6 @@ configure_flatpak() {
   flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
 }
 
-configure_rclone() {
-  read -p "Deseja configurar o Rclone? [S/n]" resposta
-
-  resposta=$(echo $resposta | tr 'a-z' 'A-Z')
-
-  if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
-      mkdir $HOME/.mycloud
-
-      rclone config
-      mkdir -p $HOME/Documents/Scripts/Logs
-
-      # Cria o serviço de montagem do rclone.
-      sudo cat << EOF > $HOME/rclone-mount.service
-[Unit]
-Description=Rclone Mount OneDrive
-Wants=network-online.target
-After=network-online.target
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/rclone mount OneDrive: $HOME/.mycloud \
-    --log-file $HOME/Documents/Scripts/Logs/rclone-mount.log \
-    --vfs-cache-mode full \
-    --vfs-cache-max-size 2G \
-    --vfs-cache-max-age 10m \
-    --rc \
-    --rc-enable-metrics \
-    --rc-web-gui \
-    --no-console \
-    --multi-thread-streams 32 \
-    --rc-no-auth \
-    --rc-web-gui-no-open-browser \
-    --fast-list \
-    --onedrive-chunk-size 25M \
-    --use-mmap \
-    --buffer-size 32M \
-    --vfs-read-chunk-size 1M \
-    --vfs-read-chunk-size-limit 128M
-ExecStop=/bin/fusermount -uz $HOME/.mycloud
-Restart=on-failure
-User=$USER
-
-[Install]
-WantedBy=default.target
-EOF
-      # Cria o bisync.
-      sudo cat << EOF > $HOME/rclone-bisync.service
-[Unit]
-Description=Sincronização bidirecional de pastas com OneDrive via Rclone
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/rclone bisync $HOME/Documents OneDrive:/Documents --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync $HOME/Downloads OneDrive:/Downloads --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync $HOME/Pictures OneDrive:/Pictures --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync $HOME/Videos OneDrive:/Videos --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-ExecStart=/usr/bin/rclone bisync $HOME/Music OneDrive:/Music --max-delete 20000 --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case
-User=$USER
-Nice=10
-IOSchedulingClass=best-effort
-IOSchedulingPriority=4
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-      # Cria o bisync resync.
-      sudo cat << EOF > $HOME/rclone-bisync-resync.service
-[Unit]
-Description=Sincronização bidirecional de pastas com OneDrive via Rclone
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/rclone bisync $HOME/Documents OneDrive:/Documents --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
-ExecStart=/usr/bin/rclone bisync $HOME/Downloads OneDrive:/Downloads --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
-ExecStart=/usr/bin/rclone bisync $HOME/Pictures OneDrive:/Pictures --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
-ExecStart=/usr/bin/rclone bisync $HOME/Videos OneDrive:/Videos --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
-ExecStart=/usr/bin/rclone bisync $HOME/Music OneDrive:/Music --create-empty-src-dirs --compare size,modtime,checksum --slow-hash-sync-only --resilient -MvP --drive-skip-gdocs --fix-case --resync
-User=$USER
-Nice=10
-IOSchedulingClass=best-effort
-IOSchedulingPriority=4
-
-[Install]
-WantedBy=multi-user.target
-EOF
-      # Cria o gatilho para o bisync.
-      sudo cat << EOF > $HOME/rclone-bisync.timer
-[Unit]
-Description=Executa a sincronização bidirecional do Rclone periodicamente
-
-[Timer]
-OnBootSec=5min
-OnUnitActiveSec=15min
-Unit=rclone-bisync.service
-
-[Install]
-WantedBy=timers.target
-EOF
-
-      # Cria os serviços e ativa-os.
-      sudo mv $HOME/rclone-mount.service /etc/systemd/system/
-      sudo mv $HOME/rclone-bisync.service /etc/systemd/system/
-      sudo mv $HOME/rclone-bisync-resync.service /etc/systemd/system/
-      sudo mv $HOME/rclone-bisync.timer /etc/systemd/system/
-      sudo systemctl daemon-reload
-      sudo systemctl enable --now rclone-mount.service
-      sleep 10
-
-      # Sincroniza as pastas da nuvem com o computador.
-      sudo systemctl start rclone-bisync-resync.service
-      
-      # Ativa o serviço gatilho para o bisync.
-      sudo systemctl enable --now rclone-bisync.timer
-
-      # Adiciona o Trezor Suite ao menu de aplicativos.
-      ln -s $HOME/Documents/AppImages/trezor-suite.desktop $HOME/.local/share/applications/trezor-suite.desktop
-  else
-      echo "Você escolheu não instalar e configurar o rclone."
-  fi
-}
-
 add_disk_fstab() {
   # Adiciona o disco ao fstab.
   read -p "Deseja adicionar disco ao fstab? [S/n]" resposta
@@ -422,7 +297,6 @@ main() {
   customize_mangohud
   configure_git
   add_disk_fstab
-  configure_rclone
 
   echo 'Configuração finalizada.'
 }
