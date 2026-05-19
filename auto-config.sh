@@ -1,242 +1,452 @@
 #!/bin/bash
 
 # Autor: Nelio Júnior
-# Data: 11/03/2025
-# Descrição: Script de configuração automática do Arch Linux.
-# Versão: 2.2.1
+# Data: 09/05/2026
+# Descrição: Script de configuração automática pós-instalação do Arch Linux.
+# Versão: 3.0
 
-update_system() {
-  # Atualiza o sistema.
-  sudo pacman -Syu --noconfirm
+# Descomentar se quiser ativar para o script parar caso aconteca algum erro.
+#set -euo pipefail
+
+# =========================
+# Utilitários
+# =========================
+
+ask_yes_no() {
+    local prompt="$1"
+    local default="${2:-S}"
+    local resposta
+
+    if [[ "$default" == "S" ]]; then
+        read -rp "$prompt [S/n]: " resposta
+        resposta="${resposta:-S}"
+    else
+        read -rp "$prompt [s/N]: " resposta
+        resposta="${resposta:-N}"
+    fi
+
+    resposta="$(echo "$resposta" | tr '[:lower:]' '[:upper:]')"
+
+    [[ "$resposta" == "S" ]]
 }
 
-numlock_on_init() {
-    # Ativa o NumLock na inicialização do sddm.
-    echo "[General]" | sudo tee -a /etc/sddm.conf > /dev/null
-    echo "Numlock=on" | sudo tee -a /etc/sddm.conf > /dev/null
+check_not_root() {
+    if [[ "$EUID" -eq 0 ]]; then
+        echo "Por favor, não execute este script como root."
+        echo "Execute como usuário normal com sudo configurado."
+        exit 1
+    fi
 }
 
-configure_git() {
-  # Configura o usuário e email do Git.
-  read -p "Deseja configurar o Git? [S/n]" resposta
-
-  resposta=$(echo $resposta | tr 'a-z' 'A-Z')
-
-  if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
-    read -p "Digite o seu nome: " name
-    read -p "Digite o seu e-mail: " email
-
-    git config --global user.name "$name"
-    git config --global user.email "$email"
-  else
-      echo "Você escolheu não configurar o Git."
-  fi
+check_sudo() {
+    echo "Verificando sudo..."
+    sudo -v
 }
 
-enable_systemd-resolved() {
-  # Ativa o systemd-resolved para salvar cache do DNS.
-  sudo systemctl enable --now systemd-resolved
+safe_source_file() {
+    local file="$1"
+
+    if [[ -f "$file" ]]; then
+        # shellcheck disable=SC1090
+        source "$file"
+    fi
 }
 
-install_ab_download_manager() {
-    # Instala o AB Download Manager.
-    bash <(curl -fsSL https://raw.githubusercontent.com/amir1376/ab-download-manager/master/scripts/install.sh)
-}
+# =========================
+# Pacman / Sistema
+# =========================
 
-remove_unnecessary_apps() {
-  # Remove aplicativos desnecessários.
-  sudo pacman -R --noconfirm gnome-music gnome-tour gnome-weather gnome-maps gnome-contacts gnome-calendar gnome-clocks snapshot totem epiphany simple-scan
-}
+configure_pacman() {
+    echo "Configurando pacman..."
 
-install_packages() {
-  # Instala pacotes do sistema.
-  sudo pacman -S --noconfirm zsh nvm rclone wine steam mangohud openrgb filezilla discord spotify-launcher hplip cups system-config-printer ufw dkms linux-headers fastfetch protonmail-bridge proton-vpn-gtk-app telegram-desktop gimp obs-studio inkscape qbittorrent audacity git timeshift fuse2 jdk-openjdk vlc vlc-plugins-all docker docker-compose croc flatpak cronie partitionmanager okular gwenview libreoffice-still-pt-br
-}
+    sudo sed -i 's/^#Color/Color/' /etc/pacman.conf
 
-configure_cups() {
-    # Ativa o serviço do CUPS.
-    sudo systemctl enable --now cups.service
-}
-
-configure_zsh() {
-  # Função para instalar o Oh My Zsh com tentativas
-  install_oh_my_zsh() {
-    local max_attempts=10 # Número máximo de tentativas
-    local attempt=1
-
-    echo "Instalando o Oh My Zsh..."
-    while [ $attempt -le $max_attempts ]; do
-        echo "Tentativa $attempt de $max_attempts..."
-        # Tenta baixar e instalar
-        if sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" 2>/dev/null; then
-            # Verifica se o diretório foi criado
-            if [ -d "$HOME/.oh-my-zsh" ]; then
-                echo "Oh My Zsh instalado com sucesso na tentativa $attempt!"
-                return 0  # Sucesso, sai da função
-            fi
-        fi
-        echo "Falha na tentativa $attempt. Tentando novamente em 5 segundos..."
-        sleep 5  # Aguarda 5 segundos antes da próxima tentativa
-        attempt=$((attempt + 1))
-    done
-
-    echo "Erro: Não foi possível instalar o Oh My Zsh após $max_attempts tentativas."
-    exit 1  # Falha após todas as tentativas
-  }
-
-  install_plugin() {
-    local repo_url="$1"
-    local target_dir="$2"
-    local max_attempts=10
-    local attempt=1
-
-    echo "Tentando instalar plugin em $target_dir..."
-    while [ $attempt -le $max_attempts ]; do
-        echo "Tentativa $attempt de $max_attempts..."
-        if git clone "$repo_url" "$target_dir" 2>/dev/null; then
-            if [ -d "$target_dir" ]; then
-                echo "Plugin instalado com sucesso em $target_dir na tentativa $attempt!"
-                return 0
-            fi
-        fi
-        echo "Falha na tentativa $attempt. Tentando novamente em 5 segundos..."
-        sleep 5
-        # Remove o diretório caso tenha sido criado parcialmente
-        [ -d "$target_dir" ] && rm -rf "$target_dir"
-        attempt=$((attempt + 1))
-    done
-
-    echo "Erro: Não foi possível instalar o plugin $repo_url após $max_attempts tentativas."
-    exit 1
-  }
-
-  # Define o Zsh como shell padrão.
-  sudo chsh -s /bin/zsh $USER
-  sudo chsh -s /bin/zsh root
-
-  # Executa a instalação do Oh My Zsh com tentativas.
-  install_oh_my_zsh
-  
-  # Instala o plugin Zsh Autosuggestions e Zsh Syntax Highlighting com tentativas.
-  install_plugin "https://github.com/zsh-users/zsh-autosuggestions.git" "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
-  install_plugin "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
- 
-  # Configura o Zsh.
-  sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' $HOME/.zshrc
-  sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' $HOME/.zshrc
-  
-  # Configura o Zsh para o root.
-  sudo -i cp -r $HOME/.oh-my-zsh /root/
-  sudo -i ln -s $HOME/.zshrc /root/.zshrc
+    if grep -q '^#ParallelDownloads' /etc/pacman.conf; then
+        sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 10/' /etc/pacman.conf
+    elif grep -q '^ParallelDownloads' /etc/pacman.conf; then
+        sudo sed -i 's/^ParallelDownloads.*/ParallelDownloads = 10/' /etc/pacman.conf
+    else
+        echo 'ParallelDownloads = 10' | sudo tee -a /etc/pacman.conf > /dev/null
+    fi
 }
 
 enable_multilib() {
-  # Ativa o repositório multilib.
-  sudo sed -i 's/^#\[multilib\]/[multilib]\nInclude = \/etc\/pacman.d\/mirrorlist/' /etc/pacman.conf
+    echo "Ativando repositório multilib..."
+
+    if grep -q '^\[multilib\]' /etc/pacman.conf; then
+        echo "Multilib já está ativo."
+        return
+    fi
+
+    sudo sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ s/^#//' /etc/pacman.conf
 }
 
+update_system() {
+    echo "Atualizando sistema..."
+    sudo pacman -Syu --noconfirm
+}
+
+install_packages() {
+    echo "Instalando pacotes principais..."
+
+    sudo pacman -S --needed --noconfirm \
+        base-devel \
+        git \
+        curl \
+        wget \
+        zsh \
+        nvm \
+        steam \
+        mangohud \
+        openrgb \
+        filezilla \
+        discord \
+        spotify-launcher \
+        cups \
+        cups-filters \
+        avahi \
+        nss-mdns \
+        ghostscript \
+        gsfonts \
+        dkms \
+        linux-headers \
+        fastfetch \
+        telegram-desktop \
+        gimp \
+        obs-studio \
+        inkscape \
+        qbittorrent \
+        audacity \
+        fuse2 \
+        jdk-openjdk \
+        vlc \
+        vlc-plugins-all \
+        docker \
+        docker-compose \
+        croc \
+        flatpak \
+        partitionmanager \
+        okular \
+        gwenview \
+        cmatrix \
+        ark \
+        libreoffice-still-pt-br
+}
+
+# =========================
+# DNS
+# =========================
+
+configure_systemd_resolved() {
+    echo "Configurando systemd-resolved..."
+
+    sudo systemctl enable --now systemd-resolved.service
+}
+
+# =========================
+# Git
+# =========================
+
+configure_git() {
+    if ask_yes_no "Deseja configurar o Git?" "S"; then
+        read -rp "Digite o seu nome: " name
+        read -rp "Digite o seu e-mail: " email
+
+        git config --global user.name "$name"
+        git config --global user.email "$email"
+
+        echo "Git configurado."
+    else
+        echo "Você escolheu não configurar o Git."
+    fi
+}
+
+# =========================
+# AB Download Manager
+# =========================
+
+install_ab_download_manager() {
+    if ask_yes_no "Deseja instalar o AB Download Manager?" "N"; then
+        echo "Instalando AB Download Manager..."
+        bash <(curl -fsSL https://raw.githubusercontent.com/amir1376/ab-download-manager/master/scripts/install.sh)
+    else
+        echo "AB Download Manager ignorado."
+    fi
+}
+
+# =========================
+# Impressora
+# =========================
+
+configure_printer() {
+    if ! ask_yes_no "Deseja configurar uma impressora agora?" "S"; then
+        echo "Configuração de impressora ignorada."
+        return
+    fi
+
+    echo "Configurando serviço de impressão..."
+
+    sudo systemctl enable --now cups.service
+    sudo systemctl enable --now avahi-daemon.service
+
+    echo
+    read -rp "Digite o IPv4 da impressora: " printer_ip
+    read -rp "Digite o nome para salvar a impressora: " printer_name
+
+    if [[ -z "$printer_ip" || -z "$printer_name" ]]; then
+        echo "IP ou nome da impressora vazio. Cancelando configuração da impressora."
+        return
+    fi
+
+    printer_name="${printer_name// /_}"
+
+    echo
+    echo "Adicionando impressora:"
+    echo "Nome: $printer_name"
+    echo "IP: $printer_ip"
+    echo
+
+    sudo lpadmin -p "$printer_name" -E -v "ipp://$printer_ip/ipp/print" -m everywhere
+    sudo lpoptions -d "$printer_name"
+
+    echo
+    echo "Impressora configurada como padrão."
+
+    if ask_yes_no "Deseja imprimir uma página de teste?" "N"; then
+        echo "Teste de impressão Arch Linux" | lp -d "$printer_name"
+        echo "Página de teste enviada."
+    fi
+}
+
+# =========================
+# ZSH / Oh My Zsh
+# =========================
+
+configure_zsh() {
+    if ! ask_yes_no "Deseja configurar ZSH e Oh My Zsh?" "S"; then
+        echo "Configuração do ZSH ignorada."
+        return
+    fi
+
+    install_oh_my_zsh() {
+        if [[ -d "$HOME/.oh-my-zsh" ]]; then
+            echo "Oh My Zsh já está instalado."
+            return
+        fi
+
+        echo "Instalando Oh My Zsh..."
+        RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    }
+
+    install_plugin() {
+        local repo_url="$1"
+        local target_dir="$2"
+
+        if [[ -d "$target_dir" ]]; then
+            echo "Plugin já instalado: $target_dir"
+            return
+        fi
+
+        git clone "$repo_url" "$target_dir"
+    }
+
+    sudo chsh -s /bin/zsh "$USER"
+
+    install_oh_my_zsh
+
+    mkdir -p "$HOME/.oh-my-zsh/custom/plugins"
+
+    install_plugin "https://github.com/zsh-users/zsh-autosuggestions.git" \
+        "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+
+    install_plugin "https://github.com/zsh-users/zsh-syntax-highlighting.git" \
+        "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+
+    if [[ -f "$HOME/.zshrc" ]]; then
+        sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/' "$HOME/.zshrc"
+        sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' "$HOME/.zshrc"
+    fi
+
+    echo "ZSH configurado para o usuário $USER."
+    echo "Faça logout/login para aplicar o shell padrão."
+}
+
+# =========================
+# Yay / AUR
+# =========================
+
 install_yay() {
-  # Instala o Yay.
-  cd $HOME/Downloads/
-  sudo git clone https://aur.archlinux.org/yay.git
-  sudo chmod 777 ./yay
-  sudo chown -R $USER ./yay
-  cd yay
-  makepkg -si
-  rm -rf $HOME/Downloads/yay
+    if command -v yay > /dev/null 2>&1; then
+        echo "Yay já está instalado."
+        return
+    fi
+
+    echo "Instalando yay..."
+
+    mkdir -p "$HOME/Downloads"
+
+    local build_dir="$HOME/Downloads/yay"
+
+    rm -rf "$build_dir"
+    git clone https://aur.archlinux.org/yay.git "$build_dir"
+
+    cd "$build_dir"
+    makepkg -si --noconfirm
+
+    cd "$HOME"
+    rm -rf "$build_dir"
 }
 
 install_aur_packages() {
-  # Instala pacotes AUR.
-  yay -S --noconfirm visual-studio-code-bin postman-bin
+    if ! command -v yay > /dev/null 2>&1; then
+        echo "Yay não encontrado. Pulando pacotes AUR."
+        return
+    fi
+
+    echo "Instalando pacotes AUR..."
+
+    yay -S --needed --noconfirm \
+        visual-studio-code-bin
 }
+
+# =========================
+# Bluetooth
+# =========================
 
 configure_bluetooth() {
-  # Configura o Bluetooth.
-  sudo sed -i 's/#AutoEnable=true /AutoEnable=true /g' /etc/bluetooth/main.conf
-  sudo systemctl enable --now bluetooth.service
+    if ! ask_yes_no "Deseja ativar o Bluetooth?" "S"; then
+        echo "Bluetooth ignorado."
+        return
+    fi
+
+    echo "Configurando Bluetooth..."
+
+    if [[ -f /etc/bluetooth/main.conf ]]; then
+        sudo sed -i 's/^#AutoEnable=.*/AutoEnable=true/' /etc/bluetooth/main.conf
+        sudo sed -i 's/^AutoEnable=.*/AutoEnable=true/' /etc/bluetooth/main.conf
+    fi
+
+    sudo systemctl enable --now bluetooth.service
 }
+
+# =========================
+# Xpadneo
+# =========================
 
 install_xpadneo() {
-  sudo modprobe uhid
-  local repo_url="https://github.com/atar-axis/xpadneo.git"
-  local target_dir="$HOME/Downloads/xpadneo"
-  local max_attempts=10
-  local attempt=1
-
-  echo "Tentando clonar o repositório xpadneo em $target_dir..."
-  while [ $attempt -le $max_attempts ]; do
-    echo "Tentativa $attempt de $max_attempts..."
-    if git clone "$repo_url" "$target_dir" 2>/dev/null; then
-      if [ -d "$target_dir" ]; then
-        echo "Repositório xpadneo clonado com sucesso na tentativa $attempt!"
-        # Prossegue com os próximos passos
-        cd "$target_dir" || {
-          echo "Erro: Não foi possível entrar no diretório $target_dir."
-          exit 1
-        }
-        echo "Executando o script de instalação..."
-        if sudo ./install.sh; then
-          sudo modprobe hid-xpadneo
-          echo "Instalação concluída com sucesso!"
-          # Remove o diretório após a instalação
-          rm -rf "$target_dir"
-          echo "Diretório $target_dir removido."
-          return 0
-        else
-          echo "Erro: Falha ao executar install.sh."
-          exit 1
-        fi
-      fi
+    if ! ask_yes_no "Deseja instalar o xpadneo para controle Xbox via Bluetooth?" "N"; then
+        echo "xpadneo ignorado."
+        return
     fi
-      echo "Falha na tentativa $attempt. Tentando novamente em 5 segundos..."
-      sleep 5
-      # Remove o diretório caso tenha sido criado parcialmente
-      [ -d "$target_dir" ] && rm -rf "$target_dir"
-      attempt=$((attempt + 1))
-  done
 
-  echo "Erro: Não foi possível clonar o repositório $repo_url após $max_attempts tentativas."
-  exit 1
+    echo "Instalando xpadneo..."
+
+    sudo modprobe uhid || true
+
+    local repo_url="https://github.com/atar-axis/xpadneo.git"
+    local target_dir="$HOME/Downloads/xpadneo"
+
+    rm -rf "$target_dir"
+    git clone "$repo_url" "$target_dir"
+
+    cd "$target_dir"
+    sudo ./install.sh
+    sudo modprobe hid-xpadneo || true
+
+    cd "$HOME"
+    rm -rf "$target_dir"
+
+    echo "xpadneo instalado."
 }
+
+# =========================
+# Firewall
+# =========================
 
 configure_firewall() {
-  # Configura o firewall.
-  sudo systemctl enable ufw
-  sudo systemctl start ufw
-  sudo ufw enable
+    if ! ask_yes_no "Deseja ativar o firewall UFW?" "S"; then
+        echo "Firewall ignorado."
+        return
+    fi
+
+    echo "Configurando firewall..."
+
+    sudo systemctl enable --now ufw.service
+
+    sudo ufw default deny incoming
+    sudo ufw default allow outgoing
+
+    sudo ufw --force enable
+
+    echo "Firewall UFW ativado."
 }
+
+# =========================
+# Docker
+# =========================
 
 configure_docker() {
-  # Ativa o serviço do Docker.
-  sudo systemctl enable --now docker
-  sudo usermod -aG docker $USER
+    if ! ask_yes_no "Deseja configurar o Docker?" "S"; then
+        echo "Docker ignorado."
+        return
+    fi
+
+    echo "Configurando Docker..."
+
+    sudo systemctl enable --now docker.service
+    sudo usermod -aG docker "$USER"
+
+    echo "Docker configurado."
+    echo "Faça logout/login para o grupo docker funcionar sem sudo."
 }
+
+# =========================
+# NVM / Node
+# =========================
 
 configure_nvm() {
-  # Configura o NVM no zsh.
-  echo "# Adicionando o comando do NVM no ambiente" >> ~/.zshrc
-  echo "source /usr/share/nvm/init-nvm.sh" >> ~/.zshrc
-  source /usr/share/nvm/init-nvm.sh
-  nvm install node
+    if ! ask_yes_no "Deseja configurar NVM e instalar Node.js?" "S"; then
+        echo "NVM ignorado."
+        return
+    fi
+
+    echo "Configurando NVM..."
+
+    if ! grep -q 'init-nvm.sh' "$HOME/.zshrc" 2>/dev/null; then
+        {
+            echo ''
+            echo '# NVM'
+            echo 'source /usr/share/nvm/init-nvm.sh'
+        } >> "$HOME/.zshrc"
+    fi
+
+    safe_source_file /usr/share/nvm/init-nvm.sh
+
+    nvm install node
+    nvm use node
+
+    echo "NVM e Node.js configurados."
 }
+
+# =========================
+# Cronie
+# =========================
 
 configure_cronie() {
-  # Ativa o serviço do cronie.
-  sudo systemctl enable cronie.service
-  sudo systemctl start cronie.service
+    echo "Ativando cronie..."
+    sudo systemctl enable --now cronie.service
 }
 
-configure_pacman() {
-  # Configura o pacman para mostrar cores e aumenta o número de downloads simultâneos.
-  sudo sed -i 's/#Color/Color/g' /etc/pacman.conf
-  sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 10/g' /etc/pacman.conf
-}
+# =========================
+# MangoHud
+# =========================
 
 customize_mangohud() {
-  # Cria o arquivo de configuração do MangoHud.
-  mkdir -p $HOME/.config/MangoHud
-  cat << EOF > $HOME/.config/MangoHud/MangoHud.conf
+    echo "Configurando MangoHud..."
+
+    mkdir -p "$HOME/.config/MangoHud"
+
+    cat > "$HOME/.config/MangoHud/MangoHud.conf" << EOF
 no_display
 toggle_hud=Shift+F12
 gpu_fan=1
@@ -253,57 +463,85 @@ swap
 EOF
 }
 
+# =========================
+# Flatpak
+# =========================
+
 configure_flatpak() {
-  # Adiciona o repositório beta do Flathub.
-  flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+    echo "Configurando Flatpak..."
+
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+    if ask_yes_no "Deseja adicionar também o Flathub Beta?" "N"; then
+        flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+    fi
 }
+
+# =========================
+# Fstab
+# =========================
 
 add_disk_fstab() {
-  # Adiciona o disco ao fstab.
-  read -p "Deseja adicionar disco ao fstab? [S/n]" resposta
+    if ask_yes_no "Deseja adicionar disco ao fstab?" "N"; then
+        echo
+        sudo blkid
+        echo
 
-  resposta=$(echo $resposta | tr 'a-z' 'A-Z')
+        read -rp "Digite o nome do disco para comentário, ex: HD Jogos: " disk_comment
+        read -rp "Digite o UUID do disco: " uuid
+        read -rp "Digite o ponto de montagem, ex: /mnt/jogos: " mount_point
+        read -rp "Digite o tipo de sistema de arquivos, ex: ext4, btrfs, ntfs: " fs_type
 
-  if [ "$resposta" == "S" ] || [ "$resposta" == "" ]; then
-    sudo blkid
-    read -p "Digite o nome do disco (ex: /dev/sda1): " name
-    read -p "Digite o UUID do disco: " uuid
-    read -p "Digite o ponto de montagem (ex: /mnt/sda1): " mount_point
-    read -p "Digite o tipo de sistema de arquivos (ex: btrfs): " fs_type
-    echo -e "# $name\nUUID=$uuid $mount_point $fs_type defaults 0 0" | sudo tee -a /etc/fstab
-  else
-      echo "Você escolheu não configurar disco no fstab."
-  fi
+        if [[ -z "$uuid" || -z "$mount_point" || -z "$fs_type" ]]; then
+            echo "Dados incompletos. Cancelando configuração do fstab."
+            return
+        fi
+
+        sudo mkdir -p "$mount_point"
+
+        echo -e "\n# $disk_comment\nUUID=$uuid $mount_point $fs_type defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
+
+        echo "Entrada adicionada ao /etc/fstab."
+    else
+        echo "Você escolheu não configurar disco no fstab."
+    fi
 }
+
+# =========================
+# Main
+# =========================
 
 main() {
-  enable_systemd-resolved
-  enable_multilib
-  numlock_on_init
-  update_system
-  remove_unnecessary_apps
-  install_packages
-  install_ab_download_manager
-  configure_zsh
-  configure_cups
-  install_yay
-  install_aur_packages
-  configure_firewall
-  configure_docker
-  install_nvm
-  configure_cronie
-  configure_pacman
-  configure_flatpak
-  customize_mangohud
-  configure_git
-  add_disk_fstab
+    check_not_root
+    check_sudo
 
-  echo 'Configuração finalizada.'
+    configure_pacman
+    enable_multilib
+    update_system
+    install_packages
+
+    configure_systemd_resolved
+
+    configure_docker
+    configure_flatpak
+    customize_mangohud
+
+    configure_printer
+
+    install_ab_download_manager
+
+    configure_zsh
+    configure_nvm
+
+    install_yay
+    install_aur_packages
+
+    configure_git
+    add_disk_fstab
+
+    echo
+    echo "Configuração finalizada."
+    echo "Recomendo reiniciar o sistema agora."
 }
-
-if [ "$EUID" -eq 0 ]; then
-  echo "Por favor, não execute este script como root."
-  exit 1
-fi
 
 main
