@@ -130,6 +130,7 @@ install_packages() {
         gwenview \
         cmatrix \
         ark \
+        proton-vpn-gtk-app \
         libreoffice-still-pt-br
 }
 
