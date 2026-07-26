@@ -86,6 +86,42 @@ update_system() {
     sudo pacman -Syu --noconfirm
 }
 
+prism_launcher_instances_sync() {
+    echo "Configurando sincronização das instâncias do Prism Launcher..."
+
+    local prism_source="$HOME/Documentos/Jogos/Minecraft/PrismLauncher/instances"
+    local prism_destination="$HOME/.local/share/PrismLauncher/instances"
+    local prism_destination_parent
+
+    prism_destination_parent="$(dirname "$prism_destination")"
+
+    # Cria a pasta sincronizada e a pasta-pai usada pelo Prism Launcher.
+    mkdir -p "$prism_source"
+    mkdir -p "$prism_destination_parent"
+
+    # Não altera nada se o destino já for um link para a origem correta.
+    if [[ -L "$prism_destination" ]]; then
+        if [[ "$(readlink -f -- "$prism_destination")" == "$(readlink -f -- "$prism_source")" ]]; then
+            echo "O link das instâncias do Prism Launcher já está configurado corretamente."
+            return
+        fi
+    fi
+
+    # Preserva qualquer arquivo, pasta ou link incorreto que já exista no destino.
+    if [[ -e "$prism_destination" || -L "$prism_destination" ]]; then
+        local backup_path="${prism_destination}.backup-$(date +%Y%m%d-%H%M%S)"
+
+        echo "O destino atual será preservado em:"
+        echo "$backup_path"
+        mv -- "$prism_destination" "$backup_path"
+    fi
+
+    ln -s -- "$prism_source" "$prism_destination"
+
+    echo "Link simbólico criado:"
+    echo "$prism_destination -> $prism_source"
+}
+
 install_packages() {
     echo "Instalando pacotes principais..."
 
@@ -817,6 +853,7 @@ main() {
     configure_docker
     configure_flatpak
     customize_mangohud
+    prism_launcher_instances_sync
 
     configure_printer
 
