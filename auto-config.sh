@@ -212,294 +212,45 @@ install_ab_download_manager() {
 }
 
 configure_ab_download_manager() {
-    if ! ask_yes_no "Deseja aplicar as configurações do AB Download Manager?" "S"; then
+    if ! ask_yes_no "Deseja configurar o AB Download Manager?" "S"; then
         echo "Configuração do AB Download Manager ignorada."
         return
     fi
 
-    echo "Configurando AB Download Manager..."
+    echo "Configurando o AB Download Manager..."
 
-    local abdm_config_dir="$HOME/.abdm/config"
-    local abdm_categories_dir="$abdm_config_dir/download_db/categories"
+    local abdm_source="$HOME/Documentos/Backups/Programas/AB Download Manager/config"
+    local abdm_destination="$HOME/.abdm/config"
+    local abdm_destination_parent
 
-    mkdir -p "$abdm_categories_dir"
-    mkdir -p \
-        "$HOME/Downloads/Compressed" \
-        "$HOME/Downloads/Programs" \
-        "$HOME/Downloads/Videos" \
-        "$HOME/Downloads/Music" \
-        "$HOME/Downloads/Pictures" \
-        "$HOME/Downloads/Documents"
+    abdm_destination_parent="$(dirname "$abdm_destination")"
 
-    cat > "$abdm_config_dir/appSettings.json" << EOF
-{
-    "theme": "system",
-    "defaultDarkTheme": "black",
-    "defaultLightTheme": "light",
-    "mergeTopBarWithTitleBar": true,
-    "useNativeMenuBar": false,
-    "showIconLabels": true,
-    "useRelativeDateTime": true,
-    "useSystemTray": true,
-    "threadCount": 8,
-    "maxConcurrentDownloads": 0,
-    "maxDownloadRetryCount": 3,
-    "dynamicPartCreation": true,
-    "useServerLastModifiedTime": false,
-    "appendExtensionToIncompleteDownloads": false,
-    "useSparseFileAllocation": true,
-    "useAverageSpeed": true,
-    "showDownloadProgressDialog": true,
-    "showDownloadCompletionDialog": true,
-    "speedLimit": 0,
-    "autoStartOnBoot": true,
-    "notificationSound": true,
-    "defaultDownloadFolder": "$HOME/Downloads",
-    "browserIntegrationEnabled": true,
-    "browserIntegrationPort": 15151,
-    "trackDeletedFilesOnDisk": true,
-    "deletePartialFileOnDownloadCancellation": true,
-    "sizeUnit": "BinaryBytes",
-    "speedUnit": "BinaryBytes",
-    "ignoreSSLCertificates": false,
-    "useCategoryByDefault": true,
-    "userAgent": ""
-}
-EOF
+    # Cria a pasta sincronizada e a pasta-pai utilizada pelo AB Download Manager.
+    mkdir -p "$abdm_source"
+    mkdir -p "$abdm_destination_parent"
 
-    cat > "$abdm_config_dir/pageStatesStorage.json" << EOF
-{
-    "home": {
-        "window": {
-            "width": 1000.0,
-            "height": 500.0,
-            "isMaximized": false
-        },
-        "categories": {
-            "width": 185.0
-        },
-        "downloadListState": "{\n    \"sizes\": {},\n    \"sortBy\": {\n        \"name\": \"Date Added\",\n        \"descending\": true\n    },\n    \"visibleCells\": [\n        \"#\",\n        \"Name\",\n        \"Size\",\n        \"Status\",\n        \"Speed\",\n        \"Time Left\",\n        \"Date Added\"\n    ],\n    \"order\": [\n        \"#\",\n        \"Name\",\n        \"Size\",\n        \"Status\",\n        \"Speed\",\n        \"Time Left\",\n        \"Date Added\"\n    ]\n}"
-    },
-    "settings": {
-        "window": {
-            "width": 1000.0,
-            "height": 500.0
-        }
-    },
-    "downloadPage": {
-        "showPartInfo": false
-    },
-    "global": {
-        "lastSavedLocations": "[\n    \"$HOME/Downloads\"\n]"
-    }
-}
-EOF
+    # Não altera nada se o destino já for um link para a origem correta.
+    if [[ -L "$abdm_destination" ]]; then
+        if [[ "$(readlink -f -- "$abdm_destination")" == "$(readlink -f -- "$abdm_source")" ]]; then
+            echo "O link de configuração do AB Download Manager já está configurado corretamente."
+            return
+        fi
+    fi
 
-    cat > "$abdm_categories_dir/categories.json" << EOF
-[
-    {
-        "id": 0,
-        "name": "Compressed",
-        "icon": "icon:pictureFile",
-        "path": "$HOME/Downloads/Compressed",
-        "usePath": true,
-        "acceptedFileTypes": [
-            "zip",
-            "rar",
-            "7z",
-            "tar",
-            "gz",
-            "bz2",
-            "xz",
-            "iso",
-            "dmg",
-            "tgz"
-        ],
-        "acceptedUrlPatterns": [],
-        "items": [
-            1,
-            2,
-            4,
-            6
-        ],
-        "hasFileTypes": true,
-        "hasUrlPattern": false,
-        "filterCount": 1,
-        "hasFilters": true
-    },
-    {
-        "id": 1,
-        "name": "Programs",
-        "icon": "icon:zipFile",
-        "path": "$HOME/Downloads/Programs",
-        "usePath": true,
-        "acceptedFileTypes": [
-            "apk",
-            "exe",
-            "msi",
-            "bat",
-            "sh",
-            "jar",
-            "app",
-            "deb",
-            "rpm",
-            "bin"
-        ],
-        "acceptedUrlPatterns": [],
-        "items": [
-            3
-        ],
-        "hasFileTypes": true,
-        "hasUrlPattern": false,
-        "filterCount": 1,
-        "hasFilters": true
-    },
-    {
-        "id": 2,
-        "name": "Videos",
-        "icon": "icon:musicFile",
-        "path": "$HOME/Downloads/Videos",
-        "usePath": true,
-        "acceptedFileTypes": [
-            "mp4",
-            "avi",
-            "mkv",
-            "mov",
-            "wmv",
-            "flv",
-            "webm",
-            "m4v",
-            "3gp",
-            "mpeg",
-            "ts"
-        ],
-        "acceptedUrlPatterns": [],
-        "items": [],
-        "hasFileTypes": true,
-        "hasUrlPattern": false,
-        "filterCount": 1,
-        "hasFilters": true
-    },
-    {
-        "id": 3,
-        "name": "Music",
-        "icon": "icon:folderOpen",
-        "path": "$HOME/Downloads/Music",
-        "usePath": true,
-        "acceptedFileTypes": [
-            "mp3",
-            "wav",
-            "aac",
-            "flac",
-            "ogg",
-            "aiff",
-            "wma",
-            "m4a"
-        ],
-        "acceptedUrlPatterns": [],
-        "items": [],
-        "hasFileTypes": true,
-        "hasUrlPattern": false,
-        "filterCount": 1,
-        "hasFilters": true
-    },
-    {
-        "id": 4,
-        "name": "Pictures",
-        "icon": "icon:fileOpen",
-        "path": "$HOME/Downloads/Pictures",
-        "usePath": true,
-        "acceptedFileTypes": [
-            "jpg",
-            "jpeg",
-            "png",
-            "gif",
-            "bmp",
-            "tiff",
-            "tif",
-            "svg",
-            "webp",
-            "heic",
-            "ico",
-            "raw",
-            "psd"
-        ],
-        "acceptedUrlPatterns": [],
-        "items": [],
-        "hasFileTypes": true,
-        "hasUrlPattern": false,
-        "filterCount": 1,
-        "hasFilters": true
-    },
-    {
-        "id": 5,
-        "name": "Documents",
-        "icon": "icon:videoFile",
-        "path": "$HOME/Downloads/Documents",
-        "usePath": true,
-        "acceptedFileTypes": [
-            "doc",
-            "docx",
-            "pdf",
-            "txt",
-            "rtf",
-            "odt",
-            "xls",
-            "xlsx",
-            "ppt",
-            "pptx",
-            "csv",
-            "epub",
-            "pages"
-        ],
-        "acceptedUrlPatterns": [],
-        "items": [],
-        "hasFileTypes": true,
-        "hasUrlPattern": false,
-        "filterCount": 1,
-        "hasFilters": true
-    },
-    {
-        "id": 101,
-        "name": "Scripts",
-        "icon": "icon:settings",
-        "path": "",
-        "usePath": false,
-        "acceptedFileTypes": [
-            "sh",
-            "bash",
-            "zsh",
-            "fish",
-            "run",
-            "py",
-            "pyw",
-            "js",
-            "mjs",
-            "cjs",
-            "ts",
-            "mts",
-            "cts",
-            "bat",
-            "cmd",
-            "ps1",
-            "vbs",
-            "lua",
-            "pl",
-            "rb",
-            "awk",
-            "sed"
-        ],
-        "acceptedUrlPatterns": [],
-        "items": [],
-        "hasFileTypes": true,
-        "hasUrlPattern": false,
-        "filterCount": 1,
-        "hasFilters": true
-    }
-]
-EOF
+    # Preserva qualquer arquivo, pasta ou link incorreto existente no destino.
+    if [[ -e "$abdm_destination" || -L "$abdm_destination" ]]; then
+        local backup_path="${abdm_destination}.backup-$(date +%Y%m%d-%H%M%S)"
 
-    echo "AB Download Manager configurado."
+        echo "A configuração atual será preservada em:"
+        echo "$backup_path"
+
+        mv -- "$abdm_destination" "$backup_path"
+    fi
+
+    ln -s -- "$abdm_source" "$abdm_destination"
+
+    echo "Link simbólico criado:"
+    echo "$abdm_destination -> $abdm_source"
 }
 
 # =========================
