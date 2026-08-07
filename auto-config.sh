@@ -508,6 +508,28 @@ configure_nvm() {
 }
 
 # =========================
+# Codex CLI
+# =========================
+
+install_codex_cli() {
+    if ! ask_yes_no "Deseja instalar o Codex CLI?" "S"; then
+        echo "Codex CLI ignorado."
+        return
+    fi
+
+    if ! command -v npm > /dev/null 2>&1; then
+        echo "Não foi possível instalar o Codex CLI: npm não encontrado."
+        echo "Configure o NVM e o Node.js antes de tentar novamente."
+        return 1
+    fi
+
+    echo "Instalando Codex CLI..."
+    npm install --global @openai/codex@latest
+
+    echo "Codex CLI instalado: $(codex --version)"
+}
+
+# =========================
 # Cronie
 # =========================
 
@@ -613,6 +635,7 @@ main() {
 
     configure_zsh
     configure_nvm
+    install_codex_cli
 
     install_yay
     install_aur_packages
