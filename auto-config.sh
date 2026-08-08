@@ -157,6 +157,7 @@ install_packages() {
         jdk-openjdk \
         vlc \
         vlc-plugins-all \
+        yt-dlp \
         docker \
         docker-compose \
         croc \
