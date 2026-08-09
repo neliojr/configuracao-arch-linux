@@ -158,6 +158,7 @@ install_packages() {
         vlc \
         vlc-plugins-all \
         yt-dlp \
+        github-cli \
         docker \
         docker-compose \
         croc \
@@ -182,21 +183,26 @@ configure_systemd_resolved() {
 }
 
 # =========================
-# Git
+# Git / GitHub
 # =========================
 
-configure_git() {
-    if ask_yes_no "Deseja configurar o Git?" "S"; then
-        read -rp "Digite o seu nome: " name
-        read -rp "Digite o seu e-mail: " email
-
-        git config --global user.name "$name"
-        git config --global user.email "$email"
-
-        echo "Git configurado."
-    else
-        echo "Você escolheu não configurar o Git."
+configure_git_github() {
+    if ! ask_yes_no "Deseja configurar o Git e o GitHub?" "S"; then
+        echo "Configuração do Git e do GitHub ignorada."
+        return
     fi
+
+    local username
+    local email
+
+    read -rp "Digite o seu nome de usuário para o Git: " username
+    read -rp "Digite o seu e-mail para o Git: " email
+
+    git config --global user.name "$username"
+    git config --global user.email "$email"
+
+    echo "Git configurado. Iniciando autenticação no GitHub..."
+    gh auth login
 }
 
 # =========================
@@ -641,7 +647,7 @@ main() {
     install_yay
     install_aur_packages
 
-    configure_git
+    configure_git_github
     add_disk_fstab
 
     echo
