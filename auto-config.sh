@@ -172,6 +172,12 @@ install_packages() {
         libreoffice-still-pt-br
 }
 
+install_zen_browser() {
+    echo "Instalando Zen Browser..."
+
+    curl -fsSL https://github.com/zen-browser/updates-server/raw/refs/heads/main/install.sh | "$SHELL"
+}
+
 # =========================
 # DNS
 # =========================
@@ -627,6 +633,7 @@ main() {
     enable_multilib
     update_system
     install_packages
+    install_zen_browser
 
     configure_systemd_resolved
 
