@@ -267,6 +267,61 @@ configure_ab_download_manager() {
 }
 
 # =========================
+# OpenRGB
+# =========================
+
+configure_openrgb() {
+    if ! ask_yes_no "Deseja configurar o OpenRGB?" "S"; then
+        echo "Configuração do OpenRGB ignorada."
+        return
+    fi
+
+    echo "Configurando o OpenRGB..."
+
+    local openrgb_source="$HOME/Documentos/Backups/Programas/OpenRGB"
+    local openrgb_destination="$HOME/.config/OpenRGB"
+    local item
+    local source_path
+    local destination_path
+    local backup_path
+
+    mkdir -p "$openrgb_destination"
+
+    for item in profiles OpenRGB.json; do
+        source_path="$openrgb_source/$item"
+        destination_path="$openrgb_destination/$item"
+
+        if [[ ! -e "$source_path" ]]; then
+            echo "Origem não encontrada; link não criado:"
+            echo "$source_path"
+            continue
+        fi
+
+        # Não altera nada se o destino já for um link para a origem correta.
+        if [[ -L "$destination_path" ]]; then
+            if [[ "$(readlink -f -- "$destination_path")" == "$(readlink -f -- "$source_path")" ]]; then
+                echo "O link do OpenRGB já está configurado corretamente: $item"
+                continue
+            fi
+        fi
+
+        # Preserva qualquer arquivo, pasta ou link incorreto existente no destino.
+        if [[ -e "$destination_path" || -L "$destination_path" ]]; then
+            backup_path="${destination_path}.backup-$(date +%Y%m%d-%H%M%S)"
+
+            echo "O destino atual será preservado em:"
+            echo "$backup_path"
+            mv -- "$destination_path" "$backup_path"
+        fi
+
+        ln -s -- "$source_path" "$destination_path"
+
+        echo "Link simbólico criado:"
+        echo "$destination_path -> $source_path"
+    done
+}
+
+# =========================
 # Impressora
 # =========================
 
@@ -646,6 +701,7 @@ main() {
 
     install_ab_download_manager
     configure_ab_download_manager
+    configure_openrgb
 
     configure_zsh
     configure_nvm
