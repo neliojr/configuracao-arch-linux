@@ -169,6 +169,7 @@ install_packages() {
         cmatrix \
         ark \
         proton-vpn-gtk-app \
+        kdeconnect \
         libreoffice-still-pt-br
 }
 
