@@ -131,6 +131,7 @@ install_packages() {
         curl \
         wget \
         zsh \
+        firejail \
         nvm \
         steam \
         mangohud \
