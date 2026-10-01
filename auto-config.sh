@@ -138,7 +138,6 @@ install_packages() {
         openrgb \
         filezilla \
         discord \
-        spotify-launcher \
         cups \
         cups-filters \
         avahi \
@@ -455,6 +454,7 @@ install_aur_packages() {
     echo "Instalando pacotes AUR..."
 
     yay -S --needed --noconfirm \
+        spotifast-bin \
         visual-studio-code-bin
 }
 
