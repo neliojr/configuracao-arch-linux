@@ -578,25 +578,24 @@ configure_nvm() {
 }
 
 # =========================
-# Codex CLI
+# Claude Code CLI
 # =========================
 
-install_codex_cli() {
-    if ! ask_yes_no "Deseja instalar o Codex CLI?" "S"; then
-        echo "Codex CLI ignorado."
+install_claude_code_cli() {
+    if ! ask_yes_no "Deseja instalar o Claude Code CLI?" "S"; then
+        echo "Claude Code CLI ignorado."
         return
     fi
 
-    if ! command -v npm > /dev/null 2>&1; then
-        echo "Não foi possível instalar o Codex CLI: npm não encontrado."
-        echo "Configure o NVM e o Node.js antes de tentar novamente."
-        return 1
+    echo "Instalando Claude Code CLI..."
+    curl -fsSL https://claude.ai/install.sh | bash
+
+    if ! grep -q 'HOME/.local/bin' "$HOME/.zshrc" 2>/dev/null; then
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
     fi
+    export PATH="$HOME/.local/bin:$PATH"
 
-    echo "Instalando Codex CLI..."
-    npm install --global @openai/codex@latest
-
-    echo "Codex CLI instalado: $(codex --version)"
+    echo "Claude Code CLI instalado: $(claude --version)"
 }
 
 # =========================
@@ -707,7 +706,7 @@ main() {
 
     configure_zsh
     configure_nvm
-    install_codex_cli
+    install_claude_code_cli
 
     install_yay
     install_aur_packages
